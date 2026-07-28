@@ -1,0 +1,80 @@
+name: Architectural Decision Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-decisions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Dependencies & Build
+        run: |
+          npm ci || npm install
+          npm run build:cli
+
+      - name: Get PR Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+
+      - name: Match Changed Files Against Decision Memory
+        id: match-decisions
+        run: |
+          node -e '
+            const fs = require("fs");
+            const execSync = require("child_process").execSync;
+            const files = "${{ steps.changed-files.outputs.all_changed_files }}".split(" ").filter(Boolean);
+            const matches = new Map();
+
+            for (const file of files) {
+              try {
+                const out = execSync(`node dist/cli/index.js check "${file}" --json`, { encoding: "utf-8" });
+                const list = JSON.parse(out);
+                if (list.length > 0) {
+                  matches.set(file, list);
+                }
+              } catch (e) {}
+            }
+
+            if (matches.size > 0) {
+              let comment = "### 🧠 Architectural Decision Memory Check\n\nThe following changed files in this PR match active architectural decisions:\n\n";
+              for (const [file, list] of matches.entries()) {
+                comment += `#### \`${file}\`\n`;
+                for (const d of list) {
+                  comment += `- **[${d.id}] ${d.summary}**\n  - *Rationale*: ${d.rationale}\n  - *Scope*: \`${d.scope.join(", ")}\`\n`;
+                }
+                comment += "\n";
+              }
+              comment += "> ℹ️ *This check is advisory only. Please ensure PR changes align with established architectural rationale.*";
+              fs.writeFileSync("pr_comment.md", comment);
+              console.log("MATCHES_FOUND=true");
+            } else {
+              console.log("MATCHES_FOUND=false");
+            }
+          ' > check_summary.txt
+          cat check_summary.txt
+
+      - name: Post PR Comment
+        if: hashFiles('pr_comment.md') != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('pr_comment.md', 'utf-8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

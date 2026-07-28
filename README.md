@@ -131,7 +131,7 @@ decision-tracker record \
   --rationale "Type-safe, composable, works seamlessly with TS type inference" \
   --scope "src/**/*.ts,api/**/*.ts" \
   --tags "validation,schema" \
-  --author "rheapatel"
+  --author "tarunagnihotri"
 ```
 
 ### Check decisions for a file
@@ -150,7 +150,7 @@ Summary:   Use Zod for all runtime validation
 Rationale: Type-safe, composable, works seamlessly with TS type inference
 Scope:     src/**/*.ts, api/**/*.ts
 Tags:      validation, schema
-Author:    rheapatel
+Author:    tarunagnihotri
 --------------------------------------------------
 ```
 
@@ -352,7 +352,7 @@ tags:
   - security
   - payments
   - extension
-author: rheapatel
+author: tarunagnihotri
 confidence: explicit
 status: active
 created: 2026-07-28T15:00:00Z
@@ -405,7 +405,7 @@ The extension must go through the main web app for any payment-related actions. 
     "rationale": "Browser extension context has weaker isolation...",
     "scope": ["src/api/payments/**/*.ts", "src/extension/**/*.ts"],
     "tags": ["security", "payments", "extension"],
-    "author": "rheapatel",
+    "author": "tarunagnihotri",
     "status": "active",
     "confidence": "explicit",
     "created": "2026-07-28T15:00:00Z",
@@ -432,7 +432,7 @@ decision-tracker record \
   --rationale "ACID compliance, JSON support, mature ecosystem" \
   --scope "src/db/**/*.ts,src/models/**/*.ts" \
   --tags "database,persistence" \
-  --author "rheapatel" \
+  --author "tarunagnihotri" \
   --confidence explicit \
   --context "Evaluated SQLite, MySQL, and PostgreSQL" \
   --consequences "All persistence operations must go through pg driver"
@@ -625,7 +625,7 @@ Summary:   Do not expose payment endpoints to browser extension API
 Rationale: Browser extension context has weaker isolation; exposing payment APIs brings extension into PCI DSS scope
 Scope:     src/api/payments/**/*.ts, src/extension/**/*.ts
 Tags:      security, payments, extension
-Author:    rheapatel
+Author:    tarunagnihotri
 --------------------------------------------------
 ```
 

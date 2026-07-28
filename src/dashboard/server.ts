@@ -108,7 +108,13 @@ export function startDashboardServer(
   });
 
   // Serve Dashboard Static Files
-  const staticDir = path.resolve(__dirname, '../../dist/dashboard');
+  let staticDir = path.resolve(__dirname, '../../dist/dashboard/public');
+  if (!fs.existsSync(staticDir)) {
+    staticDir = path.resolve(__dirname, '../../dist/dashboard');
+  }
+  if (!fs.existsSync(staticDir)) {
+    staticDir = path.resolve(__dirname, './public');
+  }
   if (fs.existsSync(staticDir)) {
     app.use(express.static(staticDir));
     app.get('*', (req, res) => {

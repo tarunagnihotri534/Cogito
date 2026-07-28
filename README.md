@@ -646,6 +646,14 @@ Author:    tarunagnihotri
 
 ---
 
-## License
+## 👤 Author
+
+**Tarun Agnihotri**
+- GitHub: [@tarunagnihotri534](https://github.com/tarunagnihotri534)
+- Repository: [decision-memory](https://github.com/tarunagnihotri534/decision-memory)
+
+---
+
+## 📄 License
 
 MIT

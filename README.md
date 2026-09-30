@@ -549,6 +549,58 @@ decision-tracker export --json
 - **Atomic file writes**: Writes to temporary files before replacing targets to prevent partial corruption.
 - **Pre-commit integration**: Installs a non-destructive hook check into Husky, Git hooks path, or standard `.git/hooks/pre-commit`.
 
+
+### `decision-tracker propose`
+
+Extract candidate architectural decisions from a session transcript file into the local inbox (`.decisions/.inbox/`).
+
+```bash
+# Extract decision candidates from a Claude Code JSONL transcript
+decision-tracker propose --transcript ~/.claude/transcripts/session-123.jsonl
+
+# Extract with a custom max candidate limit and JSON output
+decision-tracker propose --transcript session.jsonl --max 3 --json
+```
+
+**Features:**
+- **Signal scoring**: Scores candidates from 0.0 to 1.0 based on decision verbs, rationale depth, comparative reasoning, and affected file scopes.
+- **Deduplication**: Automatically deduplicates candidates against existing active decisions in `.decisions/` and within the session.
+- **Capped storage**: Limits extraction to the top 5 highest-confidence candidates per session.
+- **Gitignored inbox**: Stores proposals in `.decisions/.inbox/`, which is automatically added to `.gitignore` so unreviewed proposals remain local.
+
+### `decision-tracker review`
+
+Interactive or automated review of candidate decisions saved in `.decisions/.inbox/`.
+
+```bash
+# Interactive review (TTY): approve [a], edit [e], reject [r], skip [s], or quit [q]
+decision-tracker review
+
+# Non-interactive: auto-approve high-confidence candidates (score >= 0.75)
+decision-tracker review --yes
+
+# Non-interactive with custom minimum score threshold
+decision-tracker review --yes --min-score 0.85
+
+# List pending inbox proposals without prompting
+decision-tracker review --list
+
+# Output inbox proposals as JSON
+decision-tracker review --json
+```
+
+### `decision-tracker hook <event>`
+
+Cross-platform lifecycle hook handler designed for AI agents like Claude Code. Configured in `.claude/settings.json` or called directly.
+
+```bash
+# PostToolUse: checks matching decisions when files are edited and returns advisory context
+decision-tracker hook post-tool-use < hook-input.json
+
+# SessionEnd: automatically captures candidate decisions to .decisions/.inbox/ silently
+decision-tracker hook session-end < hook-input.json
+```
+
 ### `decision-tracker serve`
 
 Start the Model Context Protocol (MCP) server over stdio for use with Claude Code or other MCP-compatible clients.

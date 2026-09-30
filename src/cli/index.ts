@@ -23,6 +23,10 @@ import {
 import { runMcpServer } from '../mcp/server.js';
 import { startDashboardServer } from '../dashboard/server.js';
 import { DecisionConfidence, DecisionStatus } from '../types/decision.js';
+import { handlePostToolUse, handleSessionEnd, readStdinJson } from '../core/hooks/index.js';
+import { proposeFromTranscript, ensureInboxIgnored } from '../core/propose/index.js';
+import { runReviewCli } from '../core/propose/review.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,6 +82,47 @@ program
         console.log(`✅ Installed /decide slash command to .claude/commands/decide.md`);
       }
     }
+
+        // 3. Ensure .decisions/.inbox is in .gitignore
+    ensureInboxIgnored(baseDir);
+
+    // 4. Configure .claude/settings.json with cross-platform Node hooks
+    try {
+      const claudeDir = path.join(baseDir, '.claude');
+      const settingsPath = path.join(claudeDir, 'settings.json');
+      let settings: any = {};
+      if (fs.existsSync(settingsPath)) {
+        try {
+          settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        } catch {}
+      }
+
+      settings.hooks = settings.hooks || {};
+      settings.hooks.PostToolUse = [
+        {
+          matcher: 'Write|Edit',
+          hooks: [
+            {
+              type: 'command',
+              command: 'decision-tracker hook post-tool-use'
+            }
+          ]
+        }
+      ];
+      settings.hooks.SessionEnd = [
+        {
+          hooks: [
+            {
+              type: 'command',
+              command: 'decision-tracker hook session-end'
+            }
+          ]
+        }
+      ];
+
+      fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+      console.log('✅ Configured Claude Code hooks in .claude/settings.json');
+    } catch {}
 
     console.log('\n🚀 Decision Tracker ready!');
   });
@@ -463,6 +508,115 @@ program
       }
       process.exitCode = 1;
     }
+  });
+
+
+program
+  .command('propose')
+  .description('Parse a session transcript to extract candidate architectural decisions into the inbox')
+  .requiredOption('--transcript <file>', 'Path to the transcript file (.jsonl)')
+  .option('--session-id <id>', 'Optional Claude Code session ID')
+  .option('--max <n>', 'Maximum candidates to extract (default: 5)', '5')
+  .option('--json', 'Output proposed candidates as JSON')
+  .action((options) => {
+    const baseDir = process.cwd();
+    const transcriptPath = path.resolve(baseDir, options.transcript);
+
+    if (!fs.existsSync(transcriptPath)) {
+      const err = `Transcript file not found: ${options.transcript}`;
+      if (options.json) {
+        console.log(JSON.stringify({ error: err }, null, 2));
+      } else {
+        console.error(`\n❌ ${err}\n`);
+      }
+      process.exitCode = 1;
+      return;
+    }
+
+    try {
+      const result = proposeFromTranscript({
+        baseDir,
+        transcriptPath,
+        sessionId: options.sessionId,
+        maxCandidates: parseInt(options.max, 10)
+      });
+
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+
+      console.log(`\n📥 Propose Summary for '${options.transcript}':`);
+      console.log(`  Extracted & saved: ${result.savedCount} candidate(s) to .decisions/.inbox/\n`);
+
+      result.proposed.forEach((c) => {
+        console.log(`• [${c.id}] (Score: ${c.score.toFixed(2)}) ${c.summary}`);
+        console.log(`  Scope: ${c.scope.length > 0 ? c.scope.join(', ') : '(needs-scope)'}`);
+        console.log(`  Rationale: ${c.rationale}`);
+        console.log('');
+      });
+
+      console.log(`Run 'decision-tracker review' to review and approve proposals.\n`);
+    } catch (err: any) {
+      if (options.json) {
+        console.log(JSON.stringify({ error: err.message }, null, 2));
+      } else {
+        console.error(`\n❌ Failed to propose from transcript: ${err.message}\n`);
+      }
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command('review')
+  .description('Review, edit, approve, or reject candidate architectural decisions in .decisions/.inbox/')
+  .option('--yes', 'Automatically approve all candidates with confidence score >= min-score threshold', false)
+  .option('--min-score <score>', 'Confidence score threshold for auto-approval with --yes (default: 0.75)', '0.75')
+  .option('--list', 'List candidate decisions in inbox without prompting', false)
+  .option('--json', 'Output candidates as JSON', false)
+  .action(async (options) => {
+    const baseDir = process.cwd();
+    const minScore = parseFloat(options.minScore);
+
+    await runReviewCli({
+      baseDir,
+      yes: Boolean(options.yes),
+      minScore: isNaN(minScore) ? 0.75 : minScore,
+      list: Boolean(options.list),
+      json: Boolean(options.json)
+    });
+  });
+
+program
+  .command('hook')
+  .description('Internal entrypoint executed by Claude Code lifecycle hooks')
+  .argument('<event>', 'Hook event: post-tool-use or session-end')
+  .option('--json', 'Output results as JSON')
+  .action(async (event, options) => {
+    const baseDir = process.cwd();
+    const normEvent = event.toLowerCase().replace(/_/g, '-');
+    const input = await readStdinJson();
+
+    if (normEvent === 'post-tool-use' || normEvent === 'posttooluse') {
+      const res = handlePostToolUse(baseDir, input);
+      if (res.systemMessage) {
+        console.log(JSON.stringify({ systemMessage: res.systemMessage }));
+      }
+      return;
+    }
+
+    if (normEvent === 'session-end' || normEvent === 'sessionend') {
+      const res = handleSessionEnd(baseDir, input);
+      if (options.json) {
+        console.log(JSON.stringify(res, null, 2));
+      } else if (res.proposedCount > 0) {
+        console.log(`Captured ${res.proposedCount} decision proposal(s) to .decisions/.inbox/`);
+      }
+      return;
+    }
+
+    console.error(`Unknown hook event '${event}'. Supported events: post-tool-use, session-end`);
+    process.exitCode = 1;
   });
 
 program

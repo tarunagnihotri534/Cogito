@@ -94,4 +94,70 @@ describe('Decision Tracker CLI Integration Tests', () => {
     expect(res.success).toBe(true);
     expect(res.path).toContain('pre-commit');
   });
+  it('should propose candidates from transcript via CLI propose and review with --yes', { timeout: 30000 }, () => {
+    runCli('init');
+
+    // Create a mock transcript
+    const transcriptFile = path.join(tmpDir, 'test-transcript.jsonl');
+    const lines = [
+      JSON.stringify({
+        type: 'tool_use',
+        name: 'Edit',
+        input: { file_path: 'src/api/auth.ts' }
+      }),
+      JSON.stringify({
+        role: 'assistant',
+        content:
+          'We decided to enforce JWT Bearer tokens for all API routes because stateless authentication enables horizontal container scaling.'
+      })
+    ];
+    fs.writeFileSync(transcriptFile, lines.join('\n'), 'utf8');
+
+    // 1. Run propose via CLI
+    const proposeOut = runCli(`propose --transcript "${transcriptFile}" --json`);
+    const proposeRes = JSON.parse(proposeOut);
+    expect(proposeRes.savedCount).toBe(1);
+    expect(proposeRes.proposed[0].summary).toContain('Enforce JWT Bearer tokens');
+
+    // 2. Run review --list --json
+    const listOut = runCli('review --json');
+    const listRes = JSON.parse(listOut);
+    expect(listRes.length).toBe(1);
+
+    // 3. Run review --yes --min-score 0.7
+    const reviewOut = runCli('review --yes --min-score 0.7');
+    expect(reviewOut).toContain('Approved');
+
+    // Verify it is now in active decisions
+    const checkOut = runCli('check "src/api/auth.ts" --json');
+    const matches = JSON.parse(checkOut);
+    expect(matches.length).toBe(1);
+    expect(matches[0].summary).toContain('Enforce JWT Bearer tokens');
+  });
+
+  it('should process hook post-tool-use via CLI hook', { timeout: 30000 }, () => {
+    runCli('init');
+    runCli(
+      'record --summary "Single DB Connection Pool" --rationale "Prevent socket exhaustion" --scope "src/db/**/*.ts"'
+    );
+
+    const hookPayload = JSON.stringify({
+      tool_name: 'Edit',
+      tool_input: {
+        file_path: 'src/db/client.ts'
+      }
+    });
+
+    const hookFile = path.join(tmpDir, 'hook-payload.json');
+    fs.writeFileSync(hookFile, hookPayload, 'utf8');
+
+    // Pass payload via stdin using node input option
+    const out = execSync(
+      `node "${localTsxBin}" "${tsxCliPath}" hook post-tool-use`,
+      { cwd: tmpDir, encoding: 'utf-8', input: hookPayload }
+    );
+
+    const parsed = JSON.parse(out);
+    expect(parsed.systemMessage).toContain('Single DB Connection Pool');
+  });
 });

@@ -1,0 +1,46 @@
+name: 'Decision Tracker PR Advisory'
+description: 'Checks PR changes against architectural decisions and posts a sticky advisory comment'
+author: 'Tarun Agnihotri'
+
+inputs:
+  base-ref:
+    description: 'Base branch or ref to diff against'
+    required: false
+    default: ${{ github.base_ref || 'main' }}
+  fail-on:
+    description: 'Fail step if matching decisions are found (options: error, warning, none)'
+    required: false
+    default: 'none'
+  comment:
+    description: 'Whether to post or update a sticky PR comment'
+    required: false
+    default: 'true'
+  scope-filter:
+    description: 'Optional glob pattern to filter which changed files are checked'
+    required: false
+    default: ''
+  github-token:
+    description: 'GitHub token for posting PR comments'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Fetch base ref for diffing
+      shell: bash
+      run: |
+        git fetch origin ${{ inputs.base-ref }} --depth=1 || true
+
+    - name: Run Decision Tracker PR Check
+      shell: bash
+      env:
+        BASE_REF: ${{ inputs.base-ref }}
+        SCOPE_FILTER: ${{ inputs.scope-filter }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        POST_COMMENT: ${{ inputs.comment }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        node ${{ github.action_path }}/scripts/pr-action.cjs

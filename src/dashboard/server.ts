@@ -1,15 +1,20 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import matter from 'gray-matter';
 import { fileURLToPath } from 'url';
 import {
   checkFileDecisions,
   getDecision,
   listDecisions,
   recordDecision,
-  updateDecisionStatus
+  updateDecisionStatus,
+  reindexStorage
 } from '../core/store.js';
+import { runDoctor } from '../core/doctor.js';
+import { getDecisionTimeline } from '../core/timeline.js';
 import { DecisionConfidence, DecisionStatus } from '../types/decision.js';
+import { z } from 'zod';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +53,24 @@ export function startDashboardServer(
     }
   });
 
+  app.get('/api/decisions/:id/timeline', (req, res) => {
+    try {
+      const timeline = getDecisionTimeline(baseDir, req.params.id);
+      res.json(timeline);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get('/api/doctor', (req, res) => {
+    try {
+      const report = runDoctor({ baseDir });
+      res.json(report);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   app.post('/api/decisions', (req, res) => {
     try {
       const body = req.body;
@@ -64,10 +87,64 @@ export function startDashboardServer(
         confidence: (body.confidence as DecisionConfidence) || 'explicit',
         context: body.context,
         consequences: body.consequences,
-        supersedes: body.supersedes
+        supersedes: body.supersedes,
+        reviewBy: body.reviewBy
       });
 
       res.status(201).json(record);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  app.put('/api/decisions/:id', (req, res) => {
+    try {
+      const record = getDecision(baseDir, req.params.id);
+      if (!record) {
+        return res.status(404).json({ error: 'Decision not found' });
+      }
+
+      const UpdateSchema = z.object({
+        summary: z.string().min(1, 'Summary is required').optional(),
+        rationale: z.string().min(1, 'Rationale is required').optional(),
+        scope: z.array(z.string()).optional(),
+        tags: z.array(z.string()).optional(),
+        reviewBy: z.string().optional(),
+        context: z.string().optional(),
+        consequences: z.string().optional()
+      });
+
+      const body = UpdateSchema.parse(req.body);
+      const fullPath = path.resolve(baseDir, record.filePath);
+      const existingFileContent = fs.readFileSync(fullPath, 'utf8');
+      const parsed = matter(existingFileContent);
+
+      const updatedData = {
+        ...parsed.data,
+        ...body
+      };
+
+      const cleanData = Object.fromEntries(
+        Object.entries(updatedData).filter(([_, v]) => v !== undefined)
+      );
+
+      const summary = body.summary || record.summary;
+      const rationale = body.rationale || record.rationale;
+      const context = body.context !== undefined ? body.context : record.context;
+      const consequences = body.consequences !== undefined ? body.consequences : record.consequences;
+
+      const bodySections = [`# ${summary}\n`];
+      bodySections.push(`## Rationale\n${rationale}\n`);
+      if (context) bodySections.push(`## Context\n${context}\n`);
+      if (consequences) bodySections.push(`## Consequences\n${consequences}\n`);
+
+      const newContent = matter.stringify(bodySections.join('\n'), cleanData);
+      fs.writeFileSync(fullPath, newContent, 'utf8');
+
+      reindexStorage(baseDir);
+
+      const updatedRecord = getDecision(baseDir, req.params.id);
+      res.json(updatedRecord);
     } catch (err: any) {
       res.status(400).json({ error: err.message });
     }
@@ -121,7 +198,6 @@ export function startDashboardServer(
       res.sendFile(path.join(staticDir, 'index.html'));
     });
   } else {
-    // Development fallback HTML if dist/dashboard is not built yet
     app.get('*', (req, res) => {
       res.send(`
         <!DOCTYPE html>
@@ -141,7 +217,9 @@ export function startDashboardServer(
                 <ul class="space-y-2 text-sm text-slate-300">
                   <li>🟢 <code>GET /api/decisions</code> - List decisions</li>
                   <li>🟢 <code>POST /api/decisions</code> - Record new decision</li>
-                  <li>🟢 <code>POST /api/decisions/check</code> - Match file path</li>
+                  <li>🟢 <code>GET /api/doctor</code> - Run diagnostics</li>
+                  <li>🟢 <code>GET /api/decisions/:id/timeline</code> - Supersession timeline</li>
+                  <li>🟢 <code>PUT /api/decisions/:id</code> - Validated decision editor</li>
                 </ul>
               </div>
             </div>

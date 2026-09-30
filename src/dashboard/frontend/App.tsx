@@ -4,74 +4,77 @@ import { DecisionCard } from './components/DecisionCard.js';
 import { DecisionDetailModal } from './components/DecisionDetailModal.js';
 import { RecordDecisionModal } from './components/RecordDecisionModal.js';
 import { CheckFileModal } from './components/CheckFileModal.js';
+import { DoctorModal } from './components/DoctorModal.js';
 
 export default function App() {
   const [decisions, setDecisions] = useState<DecisionIndexItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters & Search
-  const [search, setSearch] = useState('');
+  // Filters
   const [statusFilter, setStatusFilter] = useState<DecisionStatus | 'all'>('all');
   const [selectedTag, setSelectedTag] = useState<string>('all');
+  const [search, setSearch] = useState('');
 
   // Modals
   const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null);
   const [isRecordOpen, setIsRecordOpen] = useState(false);
   const [isCheckOpen, setIsCheckOpen] = useState(false);
+  const [isDoctorOpen, setIsDoctorOpen] = useState(false);
 
-  const fetchDecisions = () => {
+  const fetchDecisions = async () => {
     setLoading(true);
-    fetch('/api/decisions')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load decisions');
-        return res.json();
-      })
-      .then((data) => {
-        setDecisions(data);
-        setError(null);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    setError(null);
+    try {
+      const res = await fetch('/api/decisions');
+      if (!res.ok) throw new Error('Failed to fetch decisions');
+      const data = await res.json();
+      setDecisions(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchDecisions();
   }, []);
 
-  // Compute available tags
-  const allTags = Array.from(new Set(decisions.flatMap((d) => d.tags)));
-
-  // Filtered decisions
-  const filteredDecisions = decisions.filter((item) => {
-    if (statusFilter !== 'all' && item.status !== statusFilter) return false;
-    if (selectedTag !== 'all' && !item.tags.includes(selectedTag)) return false;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const matchSummary = item.summary.toLowerCase().includes(q);
-      const matchRationale = item.rationale.toLowerCase().includes(q);
-      const matchId = item.id.toLowerCase().includes(q);
-      const matchScope = item.scope.some((s) => s.toLowerCase().includes(q));
-      if (!matchSummary && !matchRationale && !matchId && !matchScope) return false;
-    }
-    return true;
-  });
-
+  // Compute metrics
   const activeCount = decisions.filter((d) => d.status === 'active').length;
   const supersededCount = decisions.filter((d) => d.status === 'superseded').length;
   const archivedCount = decisions.filter((d) => d.status === 'archived').length;
 
+  const allTags = Array.from(
+    new Set(decisions.flatMap((d) => d.tags || []))
+  ).sort();
+
+  // Filtered decisions
+  const filteredDecisions = decisions.filter((d) => {
+    if (statusFilter !== 'all' && d.status !== statusFilter) return false;
+    if (selectedTag !== 'all' && !d.tags?.includes(selectedTag)) return false;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      const matchSummary = d.summary.toLowerCase().includes(q);
+      const matchRationale = d.rationale?.toLowerCase().includes(q);
+      const matchScope = d.scope.some((s) => s.toLowerCase().includes(q));
+      if (!matchSummary && !matchRationale && !matchScope) return false;
+    }
+    return true;
+  });
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+      {/* Top Navbar */}
+      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-2xl shadow-lg shadow-indigo-500/20">
-              🧠
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-lg">
+              D
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-100 tracking-tight flex items-center gap-2">
+              <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-2">
                 Decision Tracker
                 <span className="text-[10px] font-mono font-medium px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
                   Memory v1.0
@@ -84,6 +87,13 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsDoctorOpen(true)}
+              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
+            >
+              <span>🩺 Health Doctor</span>
+            </button>
+
             <button
               onClick={() => setIsCheckOpen(true)}
               className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition-all"
@@ -107,11 +117,10 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div
             onClick={() => setStatusFilter('all')}
-            className={`p-4 rounded-xl border cursor-pointer transition-all ${
-              statusFilter === 'all'
+            className={"p-4 rounded-xl border cursor-pointer transition-all " +
+              (statusFilter === 'all'
                 ? 'bg-slate-900 border-indigo-500/50 shadow-md shadow-indigo-500/10'
-                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
-            }`}
+                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700')}
           >
             <div className="text-xs font-medium text-slate-400">Total Decisions</div>
             <div className="text-2xl font-bold text-slate-100 mt-1">{decisions.length}</div>
@@ -119,11 +128,10 @@ export default function App() {
 
           <div
             onClick={() => setStatusFilter('active')}
-            className={`p-4 rounded-xl border cursor-pointer transition-all ${
-              statusFilter === 'active'
+            className={"p-4 rounded-xl border cursor-pointer transition-all " +
+              (statusFilter === 'active'
                 ? 'bg-emerald-950/40 border-emerald-500/50 shadow-md shadow-emerald-500/10'
-                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
-            }`}
+                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700')}
           >
             <div className="text-xs font-medium text-emerald-400 flex items-center justify-between">
               <span>Active</span>
@@ -134,11 +142,10 @@ export default function App() {
 
           <div
             onClick={() => setStatusFilter('superseded')}
-            className={`p-4 rounded-xl border cursor-pointer transition-all ${
-              statusFilter === 'superseded'
+            className={"p-4 rounded-xl border cursor-pointer transition-all " +
+              (statusFilter === 'superseded'
                 ? 'bg-amber-950/40 border-amber-500/50 shadow-md shadow-amber-500/10'
-                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
-            }`}
+                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700')}
           >
             <div className="text-xs font-medium text-amber-400 flex items-center justify-between">
               <span>Superseded</span>
@@ -149,11 +156,10 @@ export default function App() {
 
           <div
             onClick={() => setStatusFilter('archived')}
-            className={`p-4 rounded-xl border cursor-pointer transition-all ${
-              statusFilter === 'archived'
+            className={"p-4 rounded-xl border cursor-pointer transition-all " +
+              (statusFilter === 'archived'
                 ? 'bg-rose-950/40 border-rose-500/50 shadow-md shadow-rose-500/10'
-                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700'
-            }`}
+                : 'bg-slate-900/50 border-slate-800/80 hover:border-slate-700')}
           >
             <div className="text-xs font-medium text-rose-400 flex items-center justify-between">
               <span>Archived</span>
@@ -166,7 +172,6 @@ export default function App() {
         {/* Filter and Search Toolbar */}
         <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 w-full md:w-auto">
-            {/* Search Input */}
             <div className="relative flex-1 md:w-80">
               <input
                 type="text"
@@ -184,11 +189,10 @@ export default function App() {
             <span className="text-xs font-medium text-slate-500 shrink-0">Tags:</span>
             <button
               onClick={() => setSelectedTag('all')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
-                selectedTag === 'all'
+              className={"px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 " +
+                (selectedTag === 'all'
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
+                  : 'bg-slate-800 text-slate-400 hover:text-slate-200')}
             >
               All
             </button>
@@ -196,11 +200,10 @@ export default function App() {
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
-                  selectedTag === tag
+                className={"px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 " +
+                  (selectedTag === tag
                     ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-                }`}
+                    : 'bg-slate-800 text-slate-400 hover:text-slate-200')}
               >
                 #{tag}
               </button>
@@ -241,6 +244,7 @@ export default function App() {
         decisionId={selectedDecisionId}
         onClose={() => setSelectedDecisionId(null)}
         onRefresh={fetchDecisions}
+        onSelectDecision={(id) => setSelectedDecisionId(id)}
       />
 
       <RecordDecisionModal
@@ -253,6 +257,15 @@ export default function App() {
         isOpen={isCheckOpen}
         onClose={() => setIsCheckOpen(false)}
         onSelectDecision={(id) => setSelectedDecisionId(id)}
+      />
+
+      <DoctorModal
+        isOpen={isDoctorOpen}
+        onClose={() => setIsDoctorOpen(false)}
+        onSelectDecision={(id) => {
+          setIsDoctorOpen(false);
+          setSelectedDecisionId(id);
+        }}
       />
     </div>
   );

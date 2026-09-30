@@ -745,6 +745,89 @@ Fetch complete details of a decision by ID.
 
 ---
 
+## Monorepo support
+
+Decision Tracker has first-class monorepo support out of the box with zero external configuration needed.
+
+### Automatic workspace discovery
+Automatically detects workspace layouts defined in:
+- `pnpm-workspace.yaml`
+- `package.json` (`workspaces: [...]`)
+- `lerna.json`, `turbo.json`, or `nx.json`
+- Conventional `packages/*`, `apps/*`, `libs/*` structures
+
+### Package-level precedence
+In a monorepo, packages can have their own isolated `.decisions/` directories alongside the repository root's `.decisions/`:
+- **Package Precedence**: When checking a file like `packages/auth/src/jwt.ts`, decisions in `packages/auth/.decisions/` take precedence over root-level decisions.
+- **Inherited Context**: Root-level architectural rules (such as repository-wide linting, logging, or licensing constraints) still apply as complementary rules.
+- **Cross-Package Overview**: Listing commands and API queries aggregate across both root and package scopes.
+
+---
+
+## Programmatic API
+
+Decision Tracker exports a complete, fully-typed TypeScript API for embedding architectural memory into scripts, build steps, custom bots, or custom dev tools:
+
+```typescript
+import {
+  check,
+  record,
+  list,
+  get,
+  doctor,
+  lint,
+  getTimeline,
+  DecisionStore,
+  matchFileSemantically
+} from 'decision-tracker';
+
+// 1. Check applicable decisions for a file path
+const applicable = check('.', 'src/api/auth.ts');
+console.log(`Found ${applicable.length} decisions governing this file.`);
+
+// 2. Record a decision programmatically
+const decision = record('.', {
+  summary: 'Standardize on Fastify for microservices',
+  rationale: 'High throughput, low overhead, and native schema validation',
+  scope: ['src/services/**'],
+  tags: ['fastify', 'api', 'backend'],
+  author: 'platform-team',
+  reviewBy: '2026-12-31'
+});
+
+// 3. Run Staleness Doctor diagnostics
+const report = doctor({ baseDir: '.' });
+console.log(`Health: ${report.healthy ? 'Healthy' : 'Issues found'}`);
+
+// 4. Object-Oriented DecisionStore
+const store = new DecisionStore('./my-repo');
+const allDecisions = await store.list({ status: 'active' });
+```
+
+---
+
+## Local semantic matching (opt-in)
+
+For complex repositories, files might relate to architectural decisions even when not matching an explicit glob pattern (e.g. dynamic imports, refactored directories).
+
+Decision Tracker includes an offline, **zero-network semantic analyzer**:
+- **Import Analysis**: Scans `import` and `require()` statements in TypeScript/JavaScript to match against decision tags and technologies.
+- **Architectural Keyword Extraction**: Identifies key architectural terminology in file contents matching decision summaries and rationale.
+- **Zero Network / 100% Offline**: Runs locally in milliseconds with zero dependencies on external LLM APIs or network services.
+- **Pluggable Architecture**: You can supply custom semantic matcher plugins via `matchFileSemantically(baseDir, filePath, { customPlugin })`.
+
+```typescript
+import { matchFileSemantically } from 'decision-tracker';
+
+const matches = matchFileSemantically('.', 'src/handlers/payment.ts');
+for (const match of matches) {
+  console.log(`Decision "${match.decision.summary}" matched with score ${match.score}`);
+  console.log('Reasons:', match.reasons);
+}
+```
+
+---
+
 ## Philosophy
 
 ### Advisory, not blocking

@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DecisionFrontmatter",
+  "description": "JSON Schema for decision-tracker architectural decision YAML frontmatter",
+  "type": "object",
+  "required": ["id", "summary", "rationale", "status", "created"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the decision, e.g. dec_20260212_abc123"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short summary of the architectural choice"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "The rationale behind the choice, constraints, and trade-offs"
+    },
+    "scope": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Glob patterns matching governed file paths"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Categorization tags"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author name or handle"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "superseded", "archived"]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["explicit", "inferred", "suggested"]
+    },
+    "created": {
+      "type": "string",
+      "description": "Creation timestamp in ISO 8601 format"
+    },
+    "reviewBy": {
+      "type": "string",
+      "description": "Optional scheduled review date (YYYY-MM-DD)"
+    },
+    "context": {
+      "type": "string",
+      "description": "Additional background context or evaluated alternatives"
+    },
+    "consequences": {
+      "type": "string",
+      "description": "Expected trade-offs or implications"
+    },
+    "supersededBy": {
+      "type": "string",
+      "description": "ID of the decision that supersedes this one"
+    },
+    "source": {
+      "description": "Provenance of the decision",
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "required": ["type", "path", "hash"],
+          "properties": {
+            "type": { "type": "string" },
+            "path": { "type": "string" },
+            "hash": { "type": "string" }
+          }
+        }
+      ]
+    }
+  }
+}

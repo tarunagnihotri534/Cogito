@@ -26,6 +26,14 @@ import { DecisionConfidence, DecisionStatus } from '../types/decision.js';
 import { handlePostToolUse, handleSessionEnd, readStdinJson } from '../core/hooks/index.js';
 import { proposeFromTranscript, ensureInboxIgnored } from '../core/propose/index.js';
 import { runReviewCli } from '../core/propose/review.js';
+import readline from 'readline/promises';
+import { runDoctor } from '../core/doctor.js';
+import { detectConflicts } from '../core/conflict.js';
+import { lintDecisions } from '../core/lint.js';
+import { searchDecisions } from '../core/search.js';
+import { getDecisionTimeline } from '../core/timeline.js';
+import { reindexStorage } from '../core/store.js';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -143,12 +151,47 @@ program
   .option('--context <context>', 'Additional background context')
   .option('--consequences <consequences>', 'Expected consequences or trade-offs')
   .option('--supersedes <oldId>', 'ID of an old decision superseded by this one')
-  .action((options) => {
+  .option('--review-by <date>', 'Scheduled review date (ISO format YYYY-MM-DD)')
+  .action(async (options) => {
     const baseDir = process.cwd();
 
     // Flatten comma-separated or space-separated tags/scopes
     const scope = options.scope.flatMap((s: string) => s.split(',').map((x) => x.trim()));
     const tags = options.tags.flatMap((t: string) => t.split(',').map((x) => x.trim()));
+
+    // Conflict and overlap detection
+    const conflicts = detectConflicts(baseDir, {
+      summary: options.summary,
+      scope,
+      tags
+    });
+
+    let supersedesTarget = options.supersedes;
+
+    if (conflicts.length > 0) {
+      console.log('\n⚠️  Potential conflict / overlap detected with existing active decision(s):');
+      for (const c of conflicts) {
+        console.log(`   • [${c.existingId}] ${c.existingSummary}`);
+        console.log(`     Reason: ${c.reason}`);
+      }
+
+      if (!supersedesTarget && process.stdin.isTTY) {
+        const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+        try {
+          const ans = (
+            await rl.question(`\nWould you like to supersede [${conflicts[0].existingId}]? [y/N]: `)
+          )
+            .trim()
+            .toLowerCase();
+          if (ans === 'y' || ans === 'yes') {
+            supersedesTarget = conflicts[0].existingId;
+            console.log(`   Linked to supersede: ${supersedesTarget}`);
+          }
+        } finally {
+          rl.close();
+        }
+      }
+    }
 
     const record = recordDecision(baseDir, {
       summary: options.summary,
@@ -159,7 +202,8 @@ program
       confidence: options.confidence as DecisionConfidence,
       context: options.context,
       consequences: options.consequences,
-      supersedes: options.supersedes
+      supersedes: supersedesTarget,
+      reviewBy: options.reviewBy
     });
 
     console.log(`\n✅ Recorded decision ${record.id}`);
@@ -617,6 +661,204 @@ program
 
     console.error(`Unknown hook event '${event}'. Supported events: post-tool-use, session-end`);
     process.exitCode = 1;
+  });
+
+
+program
+  .command('doctor')
+  .description('Diagnose architectural decisions health: dead globs, code churn, expired reviews, and broken links')
+  .option('--strict', 'Exit with code 1 if any warnings or errors are found', false)
+  .option('--json', 'Output doctor report as JSON', false)
+  .action((options) => {
+    const baseDir = process.cwd();
+    const report = runDoctor({ baseDir });
+
+    if (options.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      if (report.healthy) {
+        console.log(`\n✔ Repository architectural decisions are healthy! (${report.totalActiveDecisions} active decisions checked)\n`);
+      } else {
+        console.log(`\n🏥 Decision Tracker Doctor Report (${report.totalActiveDecisions} active decisions checked):\n`);
+        for (const issue of report.issues) {
+          const icon = issue.severity === 'error' ? '✖' : '⚠️';
+          console.log(`  ${icon} [${issue.decisionId}] ${issue.summary}`);
+          console.log(`     ${issue.message}`);
+        }
+        console.log(`\nSummary: ${report.summary.errors} error(s), ${report.summary.warnings} warning(s).\n`);
+      }
+    }
+
+    if (options.strict && !report.healthy) {
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command('lint')
+  .description('Validate decision markdown files against schema and folder structure')
+  .option('--json', 'Output lint results as JSON', false)
+  .action((options) => {
+    const baseDir = process.cwd();
+    const result = lintDecisions(baseDir);
+
+    if (options.json) {
+      console.log(JSON.stringify(result, null, 2));
+    } else {
+      if (result.valid) {
+        console.log(`\n✔ All ${result.totalFiles} decision files are valid and well-formed.\n`);
+      } else {
+        console.error(`\n✖ Lint failed with ${result.errors.length} issue(s) across ${result.totalFiles} files:\n`);
+        for (const err of result.errors) {
+          const idInfo = err.decisionId ? ` [${err.decisionId}]` : '';
+          const fieldInfo = err.field ? ` (${err.field})` : '';
+          console.error(`  • ${err.filePath}${idInfo}${fieldInfo}: ${err.message}`);
+        }
+        console.error('');
+      }
+    }
+
+    if (!result.valid) {
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command('reindex')
+  .description('Rebuild .decisions/index.json from all decision markdown files')
+  .option('--json', 'Output reindexed items as JSON', false)
+  .action((options) => {
+    const baseDir = process.cwd();
+    const items = reindexStorage(baseDir);
+
+    if (options.json) {
+      console.log(JSON.stringify(items, null, 2));
+      return;
+    }
+
+    const activeCount = items.filter((i) => i.status === 'active').length;
+    const supersededCount = items.filter((i) => i.status === 'superseded').length;
+    const archivedCount = items.filter((i) => i.status === 'archived').length;
+
+    console.log(`\n✔ Reindexed ${items.length} decision(s) into .decisions/index.json:`);
+    console.log(`  Active:     ${activeCount}`);
+    console.log(`  Superseded: ${supersededCount}`);
+    console.log(`  Archived:   ${archivedCount}\n`);
+  });
+
+program
+  .command('why')
+  .description('Explain why architectural decisions apply to a specific file with human-readable rationale')
+  .argument('<file>', 'File path to explain')
+  .option('--json', 'Output explanation as JSON', false)
+  .action((file, options) => {
+    const baseDir = process.cwd();
+    const matches = checkFileDecisions(baseDir, file);
+
+    if (options.json) {
+      console.log(JSON.stringify(matches, null, 2));
+      return;
+    }
+
+    if (matches.length === 0) {
+      console.log(`\nℹ️  No architectural decisions govern '${file}'.\n   You have full freedom to modify this file according to standard conventions.\n`);
+      return;
+    }
+
+    console.log(`\n💡 Why these decisions apply to '${file}':\n`);
+    matches.forEach((m, idx) => {
+      console.log(`${idx + 1}. [${m.id}] ${m.summary}`);
+      console.log(`   • Governs:   ${m.scope.join(', ')}`);
+      console.log(`   • Rationale: ${m.rationale}`);
+      if (m.context) console.log(`   • Context:   ${m.context}`);
+      if (m.consequences) console.log(`   • Trade-offs: ${m.consequences}`);
+      console.log('');
+    });
+  });
+
+program
+  .command('log')
+  .description('Display the evolution and supersession timeline for a decision ID')
+  .argument('<id>', 'Decision ID to trace (e.g. dec_20260212_abc123)')
+  .option('--json', 'Output timeline as JSON', false)
+  .action((id, options) => {
+    const baseDir = process.cwd();
+    const timeline = getDecisionTimeline(baseDir, id);
+
+    if (options.json) {
+      console.log(JSON.stringify(timeline, null, 2));
+      return;
+    }
+
+    if (timeline.length === 0) {
+      console.error(`\n❌ Decision '${id}' not found.\n`);
+      process.exitCode = 1;
+      return;
+    }
+
+    console.log(`\n📜 Supersession Timeline for [${id}]:\n`);
+    timeline.forEach((node, idx) => {
+      const statusBadge =
+        node.status === 'active'
+          ? '🟢 active'
+          : node.status === 'superseded'
+            ? '🟡 superseded'
+            : '🔴 archived';
+      const dateStr = node.created.slice(0, 10);
+      const isTarget = node.id === id ? ' (current query)' : '';
+
+      console.log(`[${dateStr}] ${statusBadge} ${node.id}${isTarget}`);
+      console.log(`             Summary: ${node.summary}`);
+      if (node.supersededBy) {
+        console.log(`             Superseded by: ${node.supersededBy}`);
+      }
+      if (idx < timeline.length - 1) {
+        console.log(`                    │`);
+        console.log(`                    ▼`);
+      }
+    });
+    console.log('');
+  });
+
+program
+  .command('search')
+  .description('Search architectural decisions across summaries, rationales, contexts, and tags')
+  .argument('<query>', 'Search term or query')
+  .option('--status <status>', 'Filter by status: active, superseded, archived')
+  .option('--json', 'Output search results as JSON', false)
+  .action((query, options) => {
+    const baseDir = process.cwd();
+    const results = searchDecisions(baseDir, query, {
+      status: options.status as DecisionStatus
+    });
+
+    if (options.json) {
+      console.log(JSON.stringify(results, null, 2));
+      return;
+    }
+
+    if (results.length === 0) {
+      console.log(`\nℹ️  No decisions found matching query: "${query}".\n`);
+      return;
+    }
+
+    console.log(`\n🔍 Found ${results.length} Decision(s) matching "${query}":\n`);
+    results.forEach((r) => {
+      const item = r.item;
+      const statusBadge =
+        item.status === 'active'
+          ? '🟢 active'
+          : item.status === 'superseded'
+            ? '🟡 superseded'
+            : '🔴 archived';
+
+      console.log(`• [${item.id}] ${statusBadge} (Match Score: ${r.score})`);
+      console.log(`  Summary:   ${item.summary}`);
+      console.log(`  Scope:     ${item.scope.join(', ') || '(needs-scope)'}`);
+      console.log(`  Rationale: ${item.rationale}`);
+      console.log(`  Matched:   ${r.matchedFields.join(', ')}`);
+      console.log('');
+    });
   });
 
 program

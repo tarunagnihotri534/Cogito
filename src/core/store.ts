@@ -99,7 +99,8 @@ export function reindexStorage(baseDir: string = process.cwd()): DecisionIndexIt
             context: data.context,
             consequences: data.consequences,
             supersededBy: data.supersededBy,
-            source: data.source
+            source: data.source,
+            reviewBy: data.reviewBy
           });
         }
       } catch (err) {
@@ -164,7 +165,8 @@ export function recordDecision(
     created,
     context: input.context,
     consequences: input.consequences,
-    source: input.source
+    source: input.source,
+    reviewBy: input.reviewBy
   };
 
   const bodySections: string[] = [`# ${input.summary}\n`];

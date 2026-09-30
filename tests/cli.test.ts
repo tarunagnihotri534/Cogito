@@ -160,4 +160,51 @@ describe('Decision Tracker CLI Integration Tests', () => {
     const parsed = JSON.parse(out);
     expect(parsed.systemMessage).toContain('Single DB Connection Pool');
   });
+  it('should run doctor, lint, and reindex via CLI', { timeout: 30000 }, () => {
+    runCli('init');
+    runCli('record --summary "Architecture Rule" --rationale "Rule rationale" --scope "src/**/*.ts"');
+
+    // 1. Doctor
+    const doctorOut = runCli('doctor --json');
+    const doctorRes = JSON.parse(doctorOut);
+    expect(doctorRes).toHaveProperty('healthy');
+    expect(doctorRes.totalActiveDecisions).toBe(1);
+
+    // 2. Lint
+    const lintOut = runCli('lint --json');
+    const lintRes = JSON.parse(lintOut);
+    expect(lintRes.valid).toBe(true);
+    expect(lintRes.totalFiles).toBe(1);
+
+    // 3. Reindex
+    const reindexOut = runCli('reindex --json');
+    const reindexRes = JSON.parse(reindexOut);
+    expect(reindexRes.length).toBe(1);
+    expect(reindexRes[0].summary).toBe('Architecture Rule');
+  });
+
+  it('should run why, log, and search via CLI', { timeout: 30000 }, () => {
+    runCli('init');
+    const r1 = runCli('record --summary "Use PostgreSQL DB" --rationale "ACID persistence" --scope "src/db/**/*.ts" --tags "database"');
+
+    // 1. Search
+    const searchOut = runCli('search "PostgreSQL" --json');
+    const searchRes = JSON.parse(searchOut);
+    expect(searchRes.length).toBe(1);
+    expect(searchRes[0].item.summary).toContain('PostgreSQL');
+
+    // Extract ID
+    const decId = searchRes[0].item.id;
+
+    // 2. Why
+    const whyOut = runCli('why "src/db/client.ts"');
+    expect(whyOut).toContain('Use PostgreSQL DB');
+    expect(whyOut).toContain('ACID persistence');
+
+    // 3. Log (timeline)
+    const logOut = runCli(`log "${decId}" --json`);
+    const timeline = JSON.parse(logOut);
+    expect(timeline.length).toBe(1);
+    expect(timeline[0].id).toBe(decId);
+  });
 });

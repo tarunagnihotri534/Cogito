@@ -451,6 +451,7 @@ decision-tracker record \
 | `--context` | No | — | Additional background context |
 | `--consequences` | No | — | Expected consequences or trade-offs |
 | `--supersedes` | No | — | ID of an old decision superseded by this one |
+| `--review-by` | No | — | Scheduled review date in ISO format (`YYYY-MM-DD`) |
 
 ### `decision-tracker check <file>`
 
@@ -599,6 +600,87 @@ decision-tracker hook post-tool-use < hook-input.json
 
 # SessionEnd: automatically captures candidate decisions to .decisions/.inbox/ silently
 decision-tracker hook session-end < hook-input.json
+```
+
+
+### `decision-tracker doctor`
+
+Diagnose the health and freshness of repository architectural decisions. Checks for dead globs (matching 0 files), heavily changed files (code churn since decision creation via git log), expired `reviewBy` dates, and broken `supersededBy` links.
+
+```bash
+# Run diagnostics (exits with code 0)
+decision-tracker doctor
+
+# Strict mode: exits with code 1 if any warnings or errors are found (for CI/CD)
+decision-tracker doctor --strict
+
+# Output diagnostic report as JSON
+decision-tracker doctor --json
+```
+
+### `decision-tracker lint`
+
+Validate all decision markdown files in `.decisions/` against schema definitions and directory alignment.
+
+```bash
+# Lint decision files
+decision-tracker lint
+
+# Output lint issues as JSON
+decision-tracker lint --json
+```
+
+A standard JSON Schema is published at [`schema/decision.schema.json`](schema/decision.schema.json) for IDE autocompletion and schema validation.
+
+### `decision-tracker reindex`
+
+Rebuild `.decisions/index.json` from scratch by re-scanning all Markdown files in `.decisions/(active|superseded|archived)/`.
+
+```bash
+# Rebuild decision cache index
+decision-tracker reindex
+
+# Reindex and output JSON summary
+decision-tracker reindex --json
+```
+
+### `decision-tracker why <file>`
+
+Get a clear, human-readable explanation of why specific architectural decisions govern a target file, including historical rationale, context, and constraints.
+
+```bash
+# Explain why decisions apply to a file
+decision-tracker why src/auth/session.ts
+
+# Output explanation as JSON
+decision-tracker why src/auth/session.ts --json
+```
+
+### `decision-tracker log <id>`
+
+Visualize the supersession history and evolution of an architectural decision from its origin to its current state.
+
+```bash
+# View supersession evolution timeline
+decision-tracker log dec_20260728_x8k2p9
+
+# Output timeline chain as JSON
+decision-tracker log dec_20260728_x8k2p9 --json
+```
+
+### `decision-tracker search <query>`
+
+Fast, relevance-ranked full-text search across decision summaries, rationales, contexts, consequences, tags, and authors.
+
+```bash
+# Full-text search
+decision-tracker search "PostgreSQL persistence"
+
+# Filter search results by status
+decision-tracker search "caching" --status active
+
+# Output search results as JSON
+decision-tracker search "JWT" --json
 ```
 
 ### `decision-tracker serve`

@@ -41,10 +41,13 @@ describe("MCP Server", () => {
       const result = await client.listTools();
       const names = result.tools.map((t) => t.name).sort();
       expect(names).toEqual([
+        "doctor",
         "get_decision",
+        "get_timeline",
         "list_decisions",
         "query_decisions",
         "record_decision",
+        "search_decisions",
       ]);
     });
   });
@@ -378,6 +381,69 @@ describe("MCP Server", () => {
       expect(text).toContain("2 relevant decision");
       expect(text).toContain("React Server Components");
       expect(text).toContain("Tailwind CSS");
+    });
+  });
+  describe("search_decisions", () => {
+    it("searches decisions by query via MCP", async () => {
+      await client.callTool({
+        name: "record_decision",
+        arguments: {
+          summary: "Use PostgreSQL for database",
+          rationale: "Robust ACID compliance",
+          scope: ["src/db/**/*.ts"],
+          tags: ["database", "postgres"]
+        }
+      });
+
+      const res = await client.callTool({
+        name: "search_decisions",
+        arguments: { query: "PostgreSQL" }
+      });
+
+      const text = (res.content as Array<{ type: string; text: string }>)[0].text;
+      expect(text).toContain("PostgreSQL");
+      expect(text).toContain("src/db/**/*.ts");
+    });
+  });
+
+  describe("get_timeline", () => {
+    it("retrieves timeline for decision via MCP", async () => {
+      const r1 = await client.callTool({
+        name: "record_decision",
+        arguments: {
+          summary: "V1 Architecture",
+          rationale: "Initial prototype",
+          scope: ["src/**/*"]
+        }
+      });
+
+      const r1Text = (r1.content as Array<{ type: string; text: string }>)[0].text;
+      const idMatch = r1Text.match(/\[ID: ([^\]]+)\]/);
+      expect(idMatch).not.toBeNull();
+      const id = idMatch![1];
+
+      const res = await client.callTool({
+        name: "get_timeline",
+        arguments: { id }
+      });
+
+      const text = (res.content as Array<{ type: string; text: string }>)[0].text;
+      expect(text).toContain(id);
+      expect(text).toContain("V1 Architecture");
+    });
+  });
+
+  describe("doctor", () => {
+    it("runs doctor diagnostics via MCP", async () => {
+      const res = await client.callTool({
+        name: "doctor",
+        arguments: {}
+      });
+
+      const text = (res.content as Array<{ type: string; text: string }>)[0].text;
+      const parsed = JSON.parse(text);
+      expect(parsed).toHaveProperty("healthy");
+      expect(parsed).toHaveProperty("totalActiveDecisions");
     });
   });
 });

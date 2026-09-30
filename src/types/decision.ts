@@ -25,6 +25,7 @@ export interface DecisionFrontmatter {
   consequences?: string;
   supersededBy?: string;
   source?: DecisionSource;
+  reviewBy?: string;
 }
 
 export interface DecisionRecord extends DecisionFrontmatter {
@@ -47,6 +48,7 @@ export interface DecisionIndexItem {
   consequences?: string;
   supersededBy?: string;
   source?: DecisionSource;
+  reviewBy?: string;
 }
 
 export const DecisionStatusSchema = z.enum(['active', 'superseded', 'archived']);
@@ -72,7 +74,8 @@ export const RecordDecisionSchema = z.object({
   consequences: z.string().optional(),
   status: DecisionStatusSchema.optional().default('active'),
   supersedes: z.string().optional(), // ID of old decision if superseding
-  source: DecisionSourceSchema.optional()
+  source: DecisionSourceSchema.optional(),
+  reviewBy: z.string().optional()
 });
 
 export type RecordDecisionInput = z.input<typeof RecordDecisionSchema>;

@@ -17,6 +17,10 @@ import {
   QueryDecisionsSchema,
   RecordDecisionSchema
 } from '../types/decision.js';
+import { detectConflicts } from '../core/conflict.js';
+import { searchDecisions } from '../core/search.js';
+import { getDecisionTimeline } from '../core/timeline.js';
+import { runDoctor } from '../core/doctor.js';
 import { z } from 'zod';
 
 export function createServer(baseDir: string = process.cwd()): Server {
@@ -115,9 +119,50 @@ export function createServer(baseDir: string = process.cwd()): Server {
               supersedes: {
                 type: 'string',
                 description: 'ID of an old decision superseded by this new decision'
+              },
+              reviewBy: {
+                type: 'string',
+                description: 'Optional scheduled review date (YYYY-MM-DD)'
               }
             },
             required: ['summary', 'rationale', 'scope']
+          }
+        },
+        {
+          name: 'search_decisions',
+          description: 'Search architectural decisions across summaries, rationales, contexts, and tags with relevance scoring.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              query: { type: 'string', description: 'Search keywords or phrases' },
+              status: {
+                type: 'string',
+                enum: ['active', 'superseded', 'archived'],
+                description: 'Optional status filter'
+              }
+            },
+            required: ['query']
+          }
+        },
+        {
+          name: 'get_timeline',
+          description: 'Retrieve the evolution and supersession timeline for a decision ID.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', description: 'Decision ID to trace' }
+            },
+            required: ['id']
+          }
+        },
+        {
+          name: 'doctor',
+          description: 'Check decision health for staleness, dead globs, expired reviews, and broken links.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              strict: { type: 'boolean', description: 'Strict diagnostic mode' }
+            }
           }
         }
       ]
@@ -173,15 +218,32 @@ export function createServer(baseDir: string = process.cwd()): Server {
           context: args?.context,
           consequences: args?.consequences,
           confidence: (args?.confidence as DecisionConfidence) || 'explicit',
-          supersedes: args?.supersedes
+          supersedes: args?.supersedes,
+          reviewBy: args?.reviewBy
+        });
+
+        const conflicts = detectConflicts(baseDir, {
+          summary: parsed.summary,
+          scope: parsed.scope,
+          tags: parsed.tags
         });
 
         const record = recordDecision(baseDir, parsed);
+        let responseText = `Decision recorded [ID: ${record.id}]: ${record.summary}\nFile: ${record.filePath}`;
+
+        if (conflicts.length > 0 && !parsed.supersedes) {
+          responseText += `\n\n⚠️ Advisory: Potential conflict/overlap detected with active decision(s):\n`;
+          for (const c of conflicts) {
+            responseText += `- [${c.existingId}] ${c.existingSummary} (${c.reason})\n`;
+          }
+          responseText += `Consider superseding if this replaces prior architecture.`;
+        }
+
         return {
           content: [
             {
               type: 'text',
-              text: `Decision recorded [ID: ${record.id}]: ${record.summary}\nFile: ${record.filePath}`
+              text: responseText
             }
           ]
         };
@@ -235,6 +297,9 @@ export function createServer(baseDir: string = process.cwd()): Server {
           `Confidence: ${record.confidence || 'explicit'}`
         ];
 
+        if (record.reviewBy) {
+          textParts.push(`Review By: ${record.reviewBy}`);
+        }
         if (record.context) {
           textParts.push(`## Context\n${record.context}`);
         }
@@ -244,6 +309,71 @@ export function createServer(baseDir: string = process.cwd()): Server {
 
         return {
           content: [{ type: 'text', text: textParts.join('\n\n') }]
+        };
+      }
+
+      if (name === 'search_decisions') {
+        const searchSchema = z.object({
+          query: z.string().min(1),
+          status: z.enum(['active', 'superseded', 'archived']).optional()
+        });
+        const { query, status } = searchSchema.parse(args);
+        const results = searchDecisions(baseDir, query, { status });
+
+        if (results.length === 0) {
+          return {
+            content: [{ type: 'text', text: `No decisions matched query: "${query}"` }]
+          };
+        }
+
+        const lines = [
+          `Found ${results.length} decision(s) matching "${query}":`,
+          ...results.map(
+            (r) =>
+              `- [${r.item.id}] ${r.item.summary} (${r.item.status}) [Score: ${r.score}]\n  Scope: ${r.item.scope.join(', ')}\n  Matched in: ${r.matchedFields.join(', ')}`
+          )
+        ];
+
+        return {
+          content: [{ type: 'text', text: lines.join('\n\n') }]
+        };
+      }
+
+      if (name === 'get_timeline') {
+        const idSchema = z.object({ id: z.string() });
+        const { id } = idSchema.parse(args);
+        const timeline = getDecisionTimeline(baseDir, id);
+
+        if (timeline.length === 0) {
+          return {
+            content: [{ type: 'text', text: `Decision not found: ${id}` }]
+          };
+        }
+
+        const lines = [
+          `Supersession Timeline for [${id}]:`,
+          ...timeline.map(
+            (n, idx) =>
+              `${idx + 1}. [${n.id}] (${n.status}) ${n.summary}${n.supersededBy ? ` -> superseded by ${n.supersededBy}` : ''}`
+          )
+        ];
+
+        return {
+          content: [{ type: 'text', text: lines.join('\n') }]
+        };
+      }
+
+      if (name === 'doctor') {
+        const strict = Boolean(args?.strict);
+        const report = runDoctor({ baseDir, strict });
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(report, null, 2)
+            }
+          ]
         };
       }
 

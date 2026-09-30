@@ -12,6 +12,14 @@ import {
   updateDecisionStatus
 } from '../core/store.js';
 import { importAdrs } from '../core/importers/adr.js';
+import {
+  exportDecisions,
+  checkExport,
+  watchDecisions,
+  installPreCommitHook,
+  ExportTarget
+} from '../core/exporters/index.js';
+
 import { runMcpServer } from '../mcp/server.js';
 import { startDashboardServer } from '../dashboard/server.js';
 import { DecisionConfidence, DecisionStatus } from '../types/decision.js';
@@ -294,6 +302,164 @@ program
         console.log(JSON.stringify({ error: err.message }, null, 2));
       } else {
         console.error(`\n❌ Import failed: ${err.message}\n`);
+      }
+      process.exitCode = 1;
+    }
+  });
+
+
+program
+  .command('export')
+  .description('Export architectural decisions to AI agent configuration files (Cursor, AGENTS.md, Copilot, Windsurf)')
+  .option('-t, --target <target>', 'Export target: cursor, agents-md, copilot, windsurf, all', 'all')
+  .option('--check', 'Verify if exported targets are in sync without writing; exits with code 1 if out of sync', false)
+  .option('--watch', 'Watch .decisions/ directory for changes and continuously re-export', false)
+  .option('--install-pre-commit', 'Install a pre-commit hook that verifies decisions export with --check', false)
+  .option('--json', 'Output results in JSON format', false)
+  .action(async (options) => {
+    const baseDir = process.cwd();
+    const validTargets = ['cursor', 'agents-md', 'copilot', 'windsurf', 'all'];
+
+    if (!validTargets.includes(options.target)) {
+      const err = `Invalid target '${options.target}'. Valid targets are: ${validTargets.join(', ')}`;
+      if (options.json) {
+        console.log(JSON.stringify({ error: err }, null, 2));
+      } else {
+        console.error(`\n❌ ${err}\n`);
+      }
+      process.exitCode = 1;
+      return;
+    }
+
+    if (options.installPreCommit) {
+      try {
+        const res = installPreCommitHook(baseDir);
+        if (options.json) {
+          console.log(JSON.stringify({ success: true, ...res }, null, 2));
+        } else {
+          const action = res.created ? 'Installed' : res.updated ? 'Updated' : 'Already configured';
+          console.log(`\n✔ ${action} pre-commit hook in '${res.path}' (${res.hookType})\n`);
+        }
+      } catch (err: any) {
+        if (options.json) {
+          console.log(JSON.stringify({ error: err.message }, null, 2));
+        } else {
+          console.error(`\n❌ Failed to install pre-commit hook: ${err.message}\n`);
+        }
+        process.exitCode = 1;
+      }
+      return;
+    }
+
+    if (options.check) {
+      try {
+        const result = checkExport({
+          baseDir,
+          target: options.target as ExportTarget
+        });
+
+        if (options.json) {
+          console.log(JSON.stringify(result, null, 2));
+        } else {
+          if (result.inSync) {
+            console.log('\n✔ All exported decision targets are in sync.\n');
+          } else {
+            console.error('\n❌ Exported decisions are OUT OF SYNC:');
+            for (const t of result.targets) {
+              if (!t.inSync) {
+                console.error(`  • [${t.target}]`);
+                for (const d of t.details) {
+                  console.error(`      ${d}`);
+                }
+              }
+            }
+            console.error(`\nRun 'decision-tracker export' to synchronize.\n`);
+          }
+        }
+
+        if (!result.inSync) {
+          process.exitCode = 1;
+        }
+      } catch (err: any) {
+        if (options.json) {
+          console.log(JSON.stringify({ error: err.message }, null, 2));
+        } else {
+          console.error(`\n❌ Check failed: ${err.message}\n`);
+        }
+        process.exitCode = 1;
+      }
+      return;
+    }
+
+    if (options.watch) {
+      console.log(`\n👀 Watching .decisions/ for changes (target: ${options.target}). Press Ctrl+C to stop.\n`);
+      try {
+        const initialRes = exportDecisions({
+          baseDir,
+          target: options.target as ExportTarget
+        });
+        console.log(`[${new Date().toLocaleTimeString()}] Initial export complete:`);
+        for (const t of initialRes.targets) {
+          console.log(`  • [${t.target}] ${t.message || t.files.join(', ')}`);
+        }
+      } catch (err: any) {
+        console.error(`\n❌ Initial export failed: ${err.message}`);
+      }
+
+      const watcher = watchDecisions({
+        baseDir,
+        target: options.target as ExportTarget,
+        onExport: (res) => {
+          console.log(`\n[${new Date().toLocaleTimeString()}] Re-exported decisions:`);
+          for (const t of res.targets) {
+            if (t.changed) {
+              console.log(`  • [${t.target}] ${t.message || t.files.join(', ')}`);
+            }
+          }
+        },
+        onError: (err) => {
+          console.error(`\n[${new Date().toLocaleTimeString()}] Export error: ${err.message}`);
+        }
+      });
+
+      process.on('SIGINT', () => {
+        watcher.close();
+        process.exit(0);
+      });
+      process.on('SIGTERM', () => {
+        watcher.close();
+        process.exit(0);
+      });
+      return;
+    }
+
+    try {
+      const result = exportDecisions({
+        baseDir,
+        target: options.target as ExportTarget
+      });
+
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+
+      console.log(`\n✔ Exported architectural decisions (target: ${options.target}):`);
+      for (const t of result.targets) {
+        const statusIcon = t.changed ? '📝' : '⚡';
+        console.log(`  ${statusIcon} [${t.target}]: ${t.message || t.files.join(', ')}`);
+        if (t.files.length > 0 && t.target === 'cursor') {
+          for (const f of t.files) {
+            console.log(`      ${f}`);
+          }
+        }
+      }
+      console.log('');
+    } catch (err: any) {
+      if (options.json) {
+        console.log(JSON.stringify({ error: err.message }, null, 2));
+      } else {
+        console.error(`\n❌ Export failed: ${err.message}\n`);
       }
       process.exitCode = 1;
     }

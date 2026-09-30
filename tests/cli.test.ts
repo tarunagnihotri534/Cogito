@@ -66,4 +66,32 @@ describe('Decision Tracker CLI Integration Tests', () => {
     expect(getOut).toContain('GraphQL API Gateway');
     expect(getOut).toContain('Consolidate endpoints');
   });
+  it('should export decisions to all targets via CLI export --json', { timeout: 30000 }, () => {
+    runCli('init');
+    runCli(
+      'record --summary "Use ESLint flat config" --rationale "Standardized linting" --scope "eslint.config.js" --tags "linting"'
+    );
+
+    const exportOut = runCli('export --json');
+    const result = JSON.parse(exportOut);
+    expect(result.success).toBe(true);
+    expect(result.targets.length).toBe(4);
+
+    expect(fs.existsSync(path.join(tmpDir, 'AGENTS.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, '.github/copilot-instructions.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, '.windsurfrules'))).toBe(true);
+    expect(fs.existsSync(path.join(tmpDir, '.cursor/rules/use-eslint-flat-config.mdc'))).toBe(true);
+
+    const checkOut = runCli('export --check --json');
+    const checkResult = JSON.parse(checkOut);
+    expect(checkResult.inSync).toBe(true);
+  });
+
+  it('should install pre-commit hook via CLI export --install-pre-commit', { timeout: 30000 }, () => {
+    runCli('init');
+    const out = runCli('export --install-pre-commit --json');
+    const res = JSON.parse(out);
+    expect(res.success).toBe(true);
+    expect(res.path).toContain('pre-commit');
+  });
 });

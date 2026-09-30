@@ -504,6 +504,51 @@ decision-tracker import --from adr docs/adr
 decision-tracker import --from adr docs/adr --default-scope "src/**/*" --json
 ```
 
+
+### `decision-tracker export`
+
+Export architectural decisions to configuration and rule files for AI coding agents (Cursor, AGENTS.md, GitHub Copilot, Windsurf).
+
+```bash
+# Export to all supported AI agent targets
+decision-tracker export
+
+# Export to a specific target
+decision-tracker export --target cursor
+decision-tracker export --target agents-md
+decision-tracker export --target copilot
+decision-tracker export --target windsurf
+
+# Check if agent files are in sync (exits 1 if out of sync, perfect for CI)
+decision-tracker export --check
+
+# Watch .decisions/ directory and continuously re-export on changes
+decision-tracker export --watch
+
+# Install pre-commit hook (detects Husky, core.hooksPath, or .git/hooks)
+decision-tracker export --install-pre-commit
+
+# Output results as JSON
+decision-tracker export --json
+```
+
+**Target specifications:**
+
+| Target | Destination | Description |
+|---|---|---|
+| `cursor` | `.cursor/rules/<slug>.mdc` | One rule per active decision with YAML frontmatter (`description`, `globs`, `alwaysApply: false`). Automatically removes stale rules when decisions are superseded or archived. |
+| `agents-md` | `AGENTS.md` | Size-capped, scope-annotated managed section bounded by `<!-- BEGIN:decision-tracker -->` and `<!-- END:decision-tracker -->`. |
+| `copilot` | `.github/copilot-instructions.md` | Size-capped managed section for GitHub Copilot. |
+| `windsurf` | `.windsurfrules` or `.windsurf/rules/decisions.md` | Managed section for Windsurf AI / Cascade. |
+| `all` | All of the above | Default target. |
+
+**Key features:**
+- **Deterministic output**: Always sorts active decisions consistently by creation date and ID.
+- **Size-capped & scope-annotated**: Preserves token budget with compact summaries, truncated rationale thresholds, and explicit glob scopes.
+- **Marker integrity**: Throws descriptive errors if managed markers are unbalanced, duplicated, or inverted. Preserves existing CRLF / LF line endings.
+- **Atomic file writes**: Writes to temporary files before replacing targets to prevent partial corruption.
+- **Pre-commit integration**: Installs a non-destructive hook check into Husky, Git hooks path, or standard `.git/hooks/pre-commit`.
+
 ### `decision-tracker serve`
 
 Start the Model Context Protocol (MCP) server over stdio for use with Claude Code or other MCP-compatible clients.

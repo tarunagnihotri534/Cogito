@@ -3,6 +3,14 @@ import { z } from 'zod';
 export type DecisionStatus = 'active' | 'superseded' | 'archived';
 export type DecisionConfidence = 'explicit' | 'inferred' | 'suggested';
 
+export interface DecisionSourceObj {
+  type: string;
+  path: string;
+  hash: string;
+}
+
+export type DecisionSource = string | DecisionSourceObj;
+
 export interface DecisionFrontmatter {
   id: string;
   summary: string;
@@ -16,6 +24,7 @@ export interface DecisionFrontmatter {
   context?: string;
   consequences?: string;
   supersededBy?: string;
+  source?: DecisionSource;
 }
 
 export interface DecisionRecord extends DecisionFrontmatter {
@@ -37,22 +46,33 @@ export interface DecisionIndexItem {
   context?: string;
   consequences?: string;
   supersededBy?: string;
+  source?: DecisionSource;
 }
 
 export const DecisionStatusSchema = z.enum(['active', 'superseded', 'archived']);
 export const DecisionConfidenceSchema = z.enum(['explicit', 'inferred', 'suggested']);
 
+export const DecisionSourceSchema = z.union([
+  z.object({
+    type: z.string(),
+    path: z.string(),
+    hash: z.string()
+  }),
+  z.string()
+]);
+
 export const RecordDecisionSchema = z.object({
   summary: z.string().min(1, 'Summary is required'),
   rationale: z.string().min(1, 'Rationale is required'),
-  scope: z.array(z.string()).min(1, 'At least one glob scope is required'),
+  scope: z.array(z.string()).default([]),
   tags: z.array(z.string()).default([]),
   author: z.string().default('anonymous'),
   confidence: DecisionConfidenceSchema.default('explicit'),
   context: z.string().optional(),
   consequences: z.string().optional(),
   status: DecisionStatusSchema.optional().default('active'),
-  supersedes: z.string().optional() // ID of old decision if superseding
+  supersedes: z.string().optional(), // ID of old decision if superseding
+  source: DecisionSourceSchema.optional()
 });
 
 export type RecordDecisionInput = z.input<typeof RecordDecisionSchema>;

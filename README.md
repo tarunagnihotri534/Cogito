@@ -481,6 +481,29 @@ decision-tracker get dec_20260728_x8k2p9
 decision-tracker get dec_20260728_x8k2p9 --json
 ```
 
+### `decision-tracker import`
+
+Import architectural decisions from existing ADR repositories (supports MADR and Nygard formats, e.g. `docs/adr/`).
+
+Features:
+- **Status mapping**: Maps ADR statuses (`accepted`, `approved`, `draft`, `deprecated`, `superseded`, etc.) to `active`, `superseded`, or `archived`.
+- **Scope inference**: Scans ADR text for governed code paths (e.g. `src/api/auth.ts`, `src/db/`). If no scope can be inferred, imports with tag `needs-scope` and reports it. Use `--default-scope <glob>` to supply an explicit fallback.
+- **Idempotency**: Computes source content SHA-256 hashes and writes `source: { type: "adr", path: "...", hash: "..." }` frontmatter to prevent duplicate imports on subsequent runs.
+- **Two-pass supersession resolution**: Automatically links superseded decisions to their superseding decisions by filename, number, or title reference.
+- **Dry-run mode**: Preview imports without modifying storage using `--dry-run`.
+- **JSON mode**: Structured machine-readable output with `--json`.
+
+```bash
+# Dry run preview of ADR import
+decision-tracker import --from adr docs/adr --dry-run
+
+# Import ADRs into .decisions/
+decision-tracker import --from adr docs/adr
+
+# Import with explicit default scope fallback and JSON output
+decision-tracker import --from adr docs/adr --default-scope "src/**/*" --json
+```
+
 ### `decision-tracker serve`
 
 Start the Model Context Protocol (MCP) server over stdio for use with Claude Code or other MCP-compatible clients.

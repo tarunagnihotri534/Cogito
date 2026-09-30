@@ -11,6 +11,7 @@ import {
   recordDecision,
   updateDecisionStatus
 } from '../core/store.js';
+import { importAdrs } from '../core/importers/adr.js';
 import { runMcpServer } from '../mcp/server.js';
 import { startDashboardServer } from '../dashboard/server.js';
 import { DecisionConfidence, DecisionStatus } from '../types/decision.js';
@@ -226,6 +227,76 @@ program
     if (record.supersededBy) console.log(`Superseded By: ${record.supersededBy}`);
     console.log(`==================================================\n`);
     console.log(record.body);
+  });
+
+program
+  .command('import')
+  .description('Import architectural decisions from external formats (e.g. ADRs)')
+  .requiredOption('--from <format>', 'Source format to import from (supported: adr)')
+  .argument('<dir>', 'Directory containing ADR files to import')
+  .option('--default-scope <glob>', 'Explicit default glob scope if none can be inferred from ADR text')
+  .option('--dry-run', 'Simulate import without writing any files')
+  .option('--json', 'Output results in JSON format')
+  .action(async (dir, options) => {
+    const baseDir = process.cwd();
+
+    if (options.from.toLowerCase() !== 'adr') {
+      console.error(`Error: Unsupported import format '${options.from}'. Supported formats: adr`);
+      process.exitCode = 1;
+      return;
+    }
+
+    try {
+      const result = await importAdrs(baseDir, {
+        dir,
+        defaultScope: options.defaultScope,
+        dryRun: Boolean(options.dryRun)
+      });
+
+      if (options.json) {
+        console.log(JSON.stringify(result, null, 2));
+        return;
+      }
+
+      const prefix = options.dryRun ? '[DRY-RUN] ' : '';
+      console.log(`\n${prefix}ADR Import Summary for '${dir}':`);
+      console.log(`  Found:      ${result.totalFound} ADR file(s)`);
+      console.log(`  Imported:   ${result.imported.length}`);
+      console.log(`  Skipped:    ${result.skipped.length}`);
+      console.log(`  Superseded: ${result.supersededCount} link(s) resolved`);
+
+      if (result.needsScopeCount > 0) {
+        console.log(`\n⚠️  ${result.needsScopeCount} decision(s) imported without an inferred scope (tagged 'needs-scope').`);
+        console.log(`   Configure scopes for these decisions to enable file matching.`);
+      }
+
+      if (result.imported.length > 0) {
+        console.log(`\nImported Decisions:`);
+        result.imported.forEach((item) => {
+          const scopeStr = item.scope.length > 0 ? item.scope.join(', ') : '(no scope - tagged needs-scope)';
+          const statusStr = item.supersededBy ? `superseded by ${item.supersededBy}` : item.status;
+          console.log(`  • [${item.id}] (${statusStr}) ${item.summary}`);
+          console.log(`    Scope:  ${scopeStr}`);
+          console.log(`    Source: ${item.adrPath}`);
+        });
+      }
+
+      if (result.skipped.length > 0) {
+        console.log(`\nSkipped ADRs:`);
+        result.skipped.forEach((s) => {
+          console.log(`  • ${s.adrPath} (${s.reason})`);
+        });
+      }
+
+      console.log('');
+    } catch (err: any) {
+      if (options.json) {
+        console.log(JSON.stringify({ error: err.message }, null, 2));
+      } else {
+        console.error(`\n❌ Import failed: ${err.message}\n`);
+      }
+      process.exitCode = 1;
+    }
   });
 
 program

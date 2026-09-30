@@ -83,13 +83,13 @@ export function reindexStorage(baseDir: string = process.cwd()): DecisionIndexIt
         const parsed = matter(fileContent);
         const data = parsed.data as Partial<DecisionFrontmatter>;
 
-        if (data.id && data.summary && data.scope) {
+        if (data.id && data.summary && data.scope !== undefined) {
           const relativePath = normalizePath(path.relative(baseDir, fullPath));
           items.push({
             id: data.id,
             summary: data.summary,
             rationale: data.rationale || '',
-            scope: Array.isArray(data.scope) ? data.scope : [data.scope],
+            scope: Array.isArray(data.scope) ? data.scope : data.scope ? [data.scope] : [],
             tags: Array.isArray(data.tags) ? data.tags : [],
             author: data.author || 'anonymous',
             status: (data.status as DecisionStatus) || status,
@@ -98,7 +98,8 @@ export function reindexStorage(baseDir: string = process.cwd()): DecisionIndexIt
             filePath: relativePath,
             context: data.context,
             consequences: data.consequences,
-            supersededBy: data.supersededBy
+            supersededBy: data.supersededBy,
+            source: data.source
           });
         }
       } catch (err) {
@@ -133,7 +134,7 @@ export function loadIndex(baseDir: string = process.cwd()): DecisionIndexItem[] 
 
 export function recordDecision(
   baseDir: string = process.cwd(),
-  rawInput: RecordDecisionInput & { id?: string; created?: string; source?: string }
+  rawInput: RecordDecisionInput & { id?: string; created?: string }
 ): DecisionRecord {
   initStorage(baseDir);
   const input = RecordDecisionSchema.parse(rawInput);
@@ -162,7 +163,8 @@ export function recordDecision(
     confidence: input.confidence,
     created,
     context: input.context,
-    consequences: input.consequences
+    consequences: input.consequences,
+    source: input.source
   };
 
   const bodySections: string[] = [`# ${input.summary}\n`];

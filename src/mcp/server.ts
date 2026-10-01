@@ -27,7 +27,7 @@ export function createServer(baseDir: string = process.cwd()): Server {
   const server = new Server(
     {
       name: 'decision-tracker',
-      version: '1.0.0'
+      version: '0.1.0'
     },
     {
       capabilities: {

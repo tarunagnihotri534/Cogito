@@ -1,7 +1,7 @@
 {
   "name": "decision-tracker",
-  "version": "1.0.0",
-  "description": "CLI + MCP server tool that captures architectural decisions and surfaces them automatically when relevant files are edited",
+  "version": "0.1.0",
+  "description": "Institutional memory for your codebase. Captures architectural decisions and surfaces them automatically when relevant files are edited.",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -27,10 +27,49 @@
   "bin": {
     "decision-tracker": "./bin/decision-tracker.js"
   },
+  "files": [
+    "dist",
+    "bin",
+    "templates",
+    "schema",
+    "action.yml",
+    "scripts/pr-action.cjs"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tarunagnihotri534/decision-tracker.git"
+  },
+  "homepage": "https://github.com/tarunagnihotri534/decision-tracker#readme",
+  "bugs": {
+    "url": "https://github.com/tarunagnihotri534/decision-tracker/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "architecture-decision-records",
+    "adr",
+    "decisions",
+    "claude-code",
+    "cursor",
+    "developer-tools",
+    "institutional-memory",
+    "codebase-context",
+    "ai-agents"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsc && vite build",
     "build:cli": "tsc",
     "build:dashboard": "vite build",
+    "lint": "tsc --noEmit",
     "dev": "tsx watch src/cli/index.ts",
     "test": "vitest run",
     "cli": "tsx src/cli/index.ts"

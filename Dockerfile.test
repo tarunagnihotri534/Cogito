@@ -1,0 +1,21 @@
+# Clean-room test container for decision-tracker release verification
+FROM node:20-bookworm-slim
+
+# Install system prerequisites: git (required for decision-tracker init/hooks and clean-room testing), bash, ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    bash \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy repository source
+COPY . .
+
+# Ensure executable bits on test and bin scripts
+RUN chmod +x scripts/smoke-test.sh bin/decision-tracker.js
+
+# Run the complete clean-room smoke test
+ENTRYPOINT ["/bin/bash", "scripts/smoke-test.sh"]

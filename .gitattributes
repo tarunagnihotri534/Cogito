@@ -1,0 +1,8 @@
+# Enforce LF endings on all text files, especially bin and shell scripts
+* text=auto eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+bin/* text eol=lf

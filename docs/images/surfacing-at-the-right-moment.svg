@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="warnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <rect width="940" height="320" rx="14" fill="url(#bgGrad2)" stroke="#334155" stroke-width="1.5" />
+  <text x="30" y="38" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" letter-spacing="0.5">SURFACING CONTEXT: ZERO-LATENCY ADVISORY INJECTION</text>
+
+  <!-- Step 1: File Edit -->
+  <g filter="url(#shadow2)">
+    <rect x="30" y="100" width="165" height="85" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+    <text x="45" y="125" fill="#38bdf8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">File Edit / Tool Call</text>
+    <text x="45" y="145" fill="#cbd5e1" font-family="monospace" font-size="10">src/api/payments/</text>
+    <text x="45" y="160" fill="#cbd5e1" font-family="monospace" font-size="10">checkout.ts</text>
+  </g>
+
+  <path d="M 195 142 L 235 142" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#arrow2)" />
+
+  <!-- Step 2: PostToolUse Hook -->
+  <g filter="url(#shadow2)">
+    <rect x="245" y="100" width="165" height="85" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1.5" />
+    <text x="260" y="125" fill="#818cf8" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">PostToolUse Hook</text>
+    <text x="260" y="145" fill="#cbd5e1" font-family="monospace" font-size="10">decision-tracker</text>
+    <text x="260" y="160" fill="#cbd5e1" font-family="monospace" font-size="10">check &lt;file&gt;</text>
+  </g>
+
+  <path d="M 410 142 L 450 142" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#arrow2)" />
+
+  <!-- Step 3: Fast Glob Matcher -->
+  <g filter="url(#shadow2)">
+    <rect x="460" y="100" width="165" height="85" rx="8" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5" />
+    <text x="475" y="125" fill="#a78bfa" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">Scope Evaluator</text>
+    <text x="475" y="145" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11">Fast Glob Matcher</text>
+    <text x="475" y="162" fill="#34d399" font-family="monospace" font-size="10">&lt;5ms execution</text>
+  </g>
+
+  <path d="M 625 125 L 665 105" stroke="#34d399" stroke-width="1.8" fill="none" marker-end="url(#arrow2)" />
+  <path d="M 625 160 L 665 180" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#arrow2)" />
+
+  <!-- Outcome A: Match Found -->
+  <g filter="url(#shadow2)">
+    <rect x="675" y="70" width="235" height="70" rx="8" fill="url(#warnGrad)" stroke="#fb923c" stroke-width="1.5" />
+    <text x="690" y="93" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">⚠️ Advisory Context Injected</text>
+    <text x="690" y="111" fill="#fed7aa" font-family="system-ui, -apple-system, sans-serif" font-size="10">"Payment APIs excluded from extension</text>
+    <text x="690" y="124" fill="#fed7aa" font-family="system-ui, -apple-system, sans-serif" font-size="10">(PCI DSS scope boundary)"</text>
+  </g>
+
+  <!-- Outcome B: No Match -->
+  <g filter="url(#shadow2)">
+    <rect x="675" y="155" width="235" height="50" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1" />
+    <text x="690" y="178" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Silent Exit (Code 0)</text>
+    <text x="690" y="194" fill="#64748b" font-family="system-ui, -apple-system, sans-serif" font-size="10">Zero developer interruption</text>
+  </g>
+</svg>

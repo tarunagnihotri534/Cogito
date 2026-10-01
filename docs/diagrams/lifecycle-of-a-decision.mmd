@@ -1,0 +1,7 @@
+flowchart LR
+    A["Decision recorded"] --> B[".decisions/active/"]
+    B --> C{"What happens\nnext?"}
+    C -->|Still valid| B
+    C -->|Better approach found| D[".decisions/superseded/"]
+    C -->|No longer relevant| E[".decisions/archived/"]
+    D --> F["New decision\nrecorded in active/"]

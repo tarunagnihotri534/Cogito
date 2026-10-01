@@ -1,5 +1,22 @@
 # decision-tracker
 
+[![npm version](https://img.shields.io/npm/v/decision-tracker.svg?color=indigo)](https://www.npmjs.com/package/decision-tracker)
+[![CI / Release](https://github.com/tarunagnihotri534/decision-tracker/actions/workflows/release.yml/badge.svg)](https://github.com/tarunagnihotri534/decision-tracker/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![npm provenance](https://img.shields.io/badge/provenance-verified-brightgreen.svg)](https://www.npmjs.com/package/decision-tracker)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20-success.svg)](https://nodejs.org)
+
+```bash
+# 3-line quick start
+npx decision-tracker init
+npx decision-tracker record --summary "Do not expose payment APIs to extension" --rationale "PCI scope" --scope "src/extension/**/*.ts"
+npx decision-tracker check src/extension/api/client.ts
+```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/demo.gif" alt="decision-tracker demo" width="100%" />
+</p>
+
 Institutional memory for your codebase. Captures the *why* behind architectural decisions and surfaces them automatically when matching files are edited.
 
 Every codebase accumulates architectural choices that aren't obvious from reading the raw source code. Why the authentication module is synchronous. Why the browser extension cannot invoke the payments API directly. Why caching was intentionally disabled on the user profile endpoint. These choices have critical rationale — domain constraints, security boundaries, trade-offs, and lessons learned — but that context usually lives in forgotten chat logs, PR review threads, or developer memories.
@@ -23,73 +40,59 @@ It's advisory, not blocking. A helpful nudge that says: *"Hey, this area of the 
 
 When an architectural choice is made during a coding session, it gets captured and stored as a scoped, queryable markdown file.
 
-```mermaid
-flowchart LR
-    A["Coding Session\n(Claude Code, Copilot, etc.)"] --> B{"How to record?"}
-    B -->|AI calls tool| C["MCP Server\nrecord_decision"]
-    B -->|User runs command| D["CLI\ndecision-tracker record"]
-    B -->|End of session| E["Slash Command\n/decide"]
-    B -->|Visual Web UI| F["Web Dashboard\nRecord Form"]
-    C --> G["Decision Store"]
-    D --> G
-    E --> C
-    F --> G
-    G --> H[".decisions/active/\ndec_20260728_x8k2p9.md"]
-    G --> I[".decisions/index.json\n(auto-generated cache)"]
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/recording-a-decision.svg" alt="Recording a decision" width="100%" />
+</p>
+
+<details>
+<summary>View Mermaid source</summary>
+
+[docs/diagrams/recording-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/recording-a-decision.mmd)
+
+</details>
 
 ### Surfacing at the right moment
 
 When code is edited — by a human developer or an AI assistant — relevant decisions are automatically surfaced as advisory context.
 
-```mermaid
-flowchart LR
-    A["Edit a file\nsrc/api/payments/checkout.ts"] --> B["PostToolUse Hook\n(Write / Edit)"]
-    B --> C["decision-tracker check\nsrc/api/payments/checkout.ts"]
-    C --> D["Match file against\nall decision scopes"]
-    D --> E{"Decisions\nfound?"}
-    E -->|Yes| F["Advisory warning injected\ninto AI context"]
-    E -->|No| G["Silent, no action"]
-    F --> H["'Payment endpoints are excluded\nfrom the extension (PCI scope) —\nproceed?'"]
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/surfacing-at-the-right-moment.svg" alt="Surfacing at the right moment" width="100%" />
+</p>
+
+<details>
+<summary>View Mermaid source</summary>
+
+[docs/diagrams/surfacing-at-the-right-moment.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/surfacing-at-the-right-moment.mmd)
+
+</details>
 
 ### Lifecycle of a decision
 
 Decisions aren't permanent — they evolve as project requirements change.
 
-```mermaid
-flowchart LR
-    A["Decision recorded"] --> B[".decisions/active/"]
-    B --> C{"What happens\nnext?"}
-    C -->|Still valid| B
-    C -->|Better approach found| D[".decisions/superseded/"]
-    C -->|No longer relevant| E[".decisions/archived/"]
-    D --> F["New decision\nrecorded in active/"]
-```
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/lifecycle-of-a-decision.svg" alt="Lifecycle of a decision" width="100%" />
+</p>
+
+<details>
+<summary>View Mermaid source</summary>
+
+[docs/diagrams/lifecycle-of-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/lifecycle-of-a-decision.mmd)
+
+</details>
 
 ### Where it fits in your workflow
 
-```mermaid
-flowchart TB
-    subgraph During Development
-        A["AI coding session"] --> B["Decisions made\nin conversation"]
-        B --> C["Record via MCP tool,\nCLI, or /decide"]
-    end
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/workflow-fit.svg" alt="Where it fits in your workflow" width="100%" />
+</p>
 
-    subgraph On Every Edit
-        D["File modified"] --> E["Hook checks\ndecision scopes"]
-        E --> F["Advisory surfaced\nif relevant"]
-    end
+<details>
+<summary>View Mermaid source</summary>
 
-    subgraph In CI/CD & PRs
-        G["PR opened"] --> H["GitHub Action checks\nchanged files"]
-        H --> I["PR comment with\nrelevant decisions"]
-    end
+[docs/diagrams/workflow-fit.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/workflow-fit.mmd)
 
-    C --> J[".decisions/"]
-    J --> E
-    J --> H
-```
+</details>
 
 ---
 
@@ -916,6 +919,46 @@ Author:    tarunagnihotri
 
 ---
 
+## How it compares
+
+| Capability | Traditional ADRs (`docs/adr/`) | Wiki / Notion | Inline Code Comments | Static Rules (`.cursorrules`) | `decision-tracker` |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Surfaces on File Edits** | ❌ (Manual only) | ❌ (Detached) | ⚠️ (If you read surrounding code) | ⚠️ (Loaded globally on every turn) | ✅ **Automated via Hook & MCP** |
+| **Context Window Impact** | 0 tokens (never loaded) | 0 tokens | Clutters source code | High token cost (global context) | **Zero bloat (scoped only to target file)** |
+| **AI Agent Integration** | ❌ None | ❌ None | ⚠️ Passive only | ⚠️ Static prompts | ✅ **MCP tools + Hooks + Slash commands** |
+| **PR & CI Validation** | ❌ None | ❌ None | ❌ None | ❌ None | ✅ **GitHub Action checks PR diffs** |
+| **Lifecycle & Supersession** | ⚠️ Manual headers | ❌ Stales silently | ❌ Forgotten in code | ❌ Prone to bloat | ✅ **Active, Superseded, Archived tree** |
+| **Visual Dashboard** | ❌ None | ⚠️ Generic pages | ❌ None | ❌ None | ✅ **Local Web UI with Graph & Doctor** |
+| **Diagnostics & Linting** | ❌ None | ❌ None | ❌ None | ❌ None | ✅ **Schema validation & scope staleness doctor** |
+
+---
+
+## FAQ
+
+### 🔒 Privacy: Does any code or context leave my machine?
+**No. Nothing leaves your machine.**
+- `decision-tracker` runs 100% locally.
+- All decisions are saved in `.decisions/` within your git repository.
+- There are no telemetry pings, external analytics, or remote API calls.
+- Decision matching is performed using fast, local glob and AST inspection (<5ms).
+
+### 🚦 Is this advisory or blocking?
+**Advisory by default.**
+`decision-tracker` acts as an institutional guide, not an impediment. When you or an AI agent edit a file that matches an active architectural decision, it surfaces a non-blocking advisory notification containing the ID, rationale, and scope. You can proceed with modifications, update the decision, or supersede it at any time.
+
+### 🤖 Which AI agents and editors are supported?
+`decision-tracker` is tool-agnostic:
+- **Claude Code**: Native MCP server + `PostToolUse` hook + `/decide` slash command.
+- **Cursor**: Export directly to `.cursorrules` or `.cursor/rules/*.mdc`.
+- **GitHub Copilot**: Export managed architectural sections to `.github/copilot-instructions.md`.
+- **Windsurf**: Export to `.windsurfrules`.
+- **Roo Code / Cline / Any MCP Client**: Connects directly via standard stdio MCP protocol (`decision-tracker server`).
+
+### 📦 How does it work with monorepos?
+`decision-tracker` natively detects monorepos (npm/pnpm/yarn workspaces, Lerna, Turborepo). Package-level decisions in subpackages automatically take precedence over root-level decisions when files within that subpackage are edited.
+
+---
+
 ## Tech stack
 
 - **[TypeScript](https://www.typescriptlang.org/)** — Node.js 20+, ES2022 modules
@@ -935,7 +978,7 @@ Author:    tarunagnihotri
 
 **Tarun Agnihotri**
 - GitHub: [@tarunagnihotri534](https://github.com/tarunagnihotri534)
-- Repository: [decision-memory](https://github.com/tarunagnihotri534/decision-memory)
+- Repository: [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker)
 
 ---
 

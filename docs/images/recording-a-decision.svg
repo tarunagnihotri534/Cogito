@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Container -->
+  <rect width="940" height="320" rx="14" fill="url(#bgGrad)" stroke="#334155" stroke-width="1.5" />
+
+  <!-- Title -->
+  <text x="30" y="38" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" letter-spacing="0.5">WORKFLOW: RECORDING AN ARCHITECTURAL DECISION</text>
+
+  <!-- Step 1: Coding Session -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="110" width="170" height="75" rx="8" fill="url(#cardGrad)" stroke="#6366f1" stroke-width="2" />
+    <text x="115" y="142" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" text-anchor="middle">Coding Session</text>
+    <text x="115" y="162" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="11" text-anchor="middle">Claude Code, Copilot, etc.</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <path d="M 200 147 L 245 147" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Step 2: Intake Methods -->
+  <!-- Option A: MCP Server -->
+  <g filter="url(#shadow)">
+    <rect x="255" y="55" width="175" height="50" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+    <text x="342" y="77" fill="#38bdf8" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">MCP Tool Call</text>
+    <text x="342" y="93" fill="#cbd5e1" font-family="monospace" font-size="10" text-anchor="middle">record_decision</text>
+  </g>
+  <!-- Option B: CLI -->
+  <g filter="url(#shadow)">
+    <rect x="255" y="115" width="175" height="50" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1.5" />
+    <text x="342" y="137" fill="#818cf8" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">CLI Command</text>
+    <text x="342" y="153" fill="#cbd5e1" font-family="monospace" font-size="10" text-anchor="middle">decision-tracker record</text>
+  </g>
+  <!-- Option C: Slash / Web UI -->
+  <g filter="url(#shadow)">
+    <rect x="255" y="175" width="175" height="50" rx="6" fill="#1e293b" stroke="#a78bfa" stroke-width="1.5" />
+    <text x="342" y="197" fill="#a78bfa" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" text-anchor="middle">Slash Cmd / Web UI</text>
+    <text x="342" y="213" fill="#cbd5e1" font-family="monospace" font-size="10" text-anchor="middle">/decide &amp; Dashboard</text>
+  </g>
+
+  <!-- Connectors to Central Store -->
+  <path d="M 430 80 L 485 140" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+  <path d="M 430 140 L 485 140" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+  <path d="M 430 200 L 485 145" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Core Store -->
+  <g filter="url(#shadow)">
+    <rect x="495" y="105" width="165" height="75" rx="8" fill="url(#accentGrad)" stroke="#818cf8" stroke-width="1.5" />
+    <text x="577" y="138" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" text-anchor="middle">Decision Store</text>
+    <text x="577" y="157" fill="#e0e7ff" font-family="system-ui, -apple-system, sans-serif" font-size="11" text-anchor="middle">Validation &amp; Conflict Engine</text>
+  </g>
+
+  <!-- Connector to outputs -->
+  <path d="M 660 142 L 710 142" stroke="#94a3b8" stroke-width="1.8" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Storage Outputs -->
+  <g filter="url(#shadow)">
+    <rect x="720" y="85" width="190" height="55" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
+    <text x="735" y="108" fill="#34d399" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Scoped Markdown File</text>
+    <text x="735" y="126" fill="#cbd5e1" font-family="monospace" font-size="10">.decisions/active/*.md</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="720" y="150" width="190" height="55" rx="6" fill="#1e293b" stroke="#2dd4bf" stroke-width="1.5" />
+    <text x="735" y="173" fill="#2dd4bf" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Auto-Indexed Cache</text>
+    <text x="735" y="191" fill="#cbd5e1" font-family="monospace" font-size="10">.decisions/index.json</text>
+  </g>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <marker id="arrow4" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+    <filter id="shadow4" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <rect width="940" height="380" rx="14" fill="url(#bgGrad4)" stroke="#334155" stroke-width="1.5" />
+  <text x="30" y="38" fill="#e2e8f0" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" letter-spacing="0.5">WHERE DECISION-TRACKER FITS IN YOUR WORKFLOW</text>
+
+  <!-- Lane 1: Development -->
+  <rect x="30" y="65" width="270" height="280" rx="10" fill="#1e293b" stroke="#3b82f6" stroke-width="1.2" opacity="0.9" />
+  <text x="45" y="92" fill="#60a5fa" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">1. DURING DEVELOPMENT</text>
+  <g filter="url(#shadow4)">
+    <rect x="45" y="110" width="240" height="55" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+    <text x="60" y="132" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">AI Coding Session</text>
+    <text x="60" y="148" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Claude Code, Cursor, Copilot</text>
+  </g>
+  <path d="M 165 165 L 165 190" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow4)" />
+  <g filter="url(#shadow4)">
+    <rect x="45" y="195" width="240" height="60" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1.5" />
+    <text x="60" y="217" fill="#818cf8" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Capture Decision</text>
+    <text x="60" y="233" fill="#cbd5e1" font-family="monospace" font-size="10">record_decision / /decide</text>
+    <text x="60" y="246" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">or CLI: decision-tracker record</text>
+  </g>
+
+  <!-- Lane 2: On Every Edit -->
+  <rect x="335" y="65" width="270" height="280" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="1.2" opacity="0.9" />
+  <text x="350" y="92" fill="#34d399" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">2. ON EVERY FILE EDIT</text>
+  <g filter="url(#shadow4)">
+    <rect x="350" y="110" width="240" height="55" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+    <text x="365" y="132" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">File Modified</text>
+    <text x="365" y="148" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">Developer saves or AI writes code</text>
+  </g>
+  <path d="M 470 165 L 470 190" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow4)" />
+  <g filter="url(#shadow4)">
+    <rect x="350" y="195" width="240" height="60" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1.5" />
+    <text x="365" y="217" fill="#34d399" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Hook Scans Scopes</text>
+    <text x="365" y="233" fill="#cbd5e1" font-family="monospace" font-size="10">decision-tracker check &lt;file&gt;</text>
+    <text x="365" y="246" fill="#fb923c" font-family="system-ui, -apple-system, sans-serif" font-size="9">Surfaces advisory if relevant (&lt;5ms)</text>
+  </g>
+
+  <!-- Lane 3: CI/CD & PRs -->
+  <rect x="640" y="65" width="270" height="280" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="1.2" opacity="0.9" />
+  <text x="655" y="92" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">3. IN CI/CD &amp; PULL REQUESTS</text>
+  <g filter="url(#shadow4)">
+    <rect x="655" y="110" width="240" height="55" rx="6" fill="#0f172a" stroke="#475569" stroke-width="1" />
+    <text x="670" y="132" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">Pull Request Opened</text>
+    <text x="670" y="148" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="10">GitHub Action runs on PR files</text>
+  </g>
+  <path d="M 775 165 L 775 190" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow4)" />
+  <g filter="url(#shadow4)">
+    <rect x="655" y="195" width="240" height="60" rx="6" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="670" y="217" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600">PR Review Comment</text>
+    <text x="670" y="233" fill="#cbd5e1" font-family="monospace" font-size="10">action.yml (decision-check)</text>
+    <text x="670" y="246" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="9">Alerts reviewer to architectural constraints</text>
+  </g>
+
+  <!-- Connecting Central Store at bottom -->
+  <g filter="url(#shadow4)">
+    <rect x="250" y="300" width="440" height="40" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1.5" />
+    <text x="470" y="325" fill="#a5b4fc" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Single Source of Truth: .decisions/ directory (Git Tracked)</text>
+  </g>
+</svg>

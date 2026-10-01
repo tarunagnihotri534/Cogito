@@ -1,0 +1,19 @@
+flowchart TB
+    subgraph During Development
+        A["AI coding session"] --> B["Decisions made\nin conversation"]
+        B --> C["Record via MCP tool,\nCLI, or /decide"]
+    end
+
+    subgraph On Every Edit
+        D["File modified"] --> E["Hook checks\ndecision scopes"]
+        E --> F["Advisory surfaced\nif relevant"]
+    end
+
+    subgraph In CI/CD & PRs
+        G["PR opened"] --> H["GitHub Action checks\nchanged files"]
+        H --> I["PR comment with\nrelevant decisions"]
+    end
+
+    C --> J[".decisions/"]
+    J --> E
+    J --> H

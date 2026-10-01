@@ -1,0 +1,12 @@
+flowchart LR
+    A["Coding Session\n(Claude Code, Copilot, etc.)"] --> B{"How to record?"}
+    B -->|AI calls tool| C["MCP Server\nrecord_decision"]
+    B -->|User runs command| D["CLI\ndecision-tracker record"]
+    B -->|End of session| E["Slash Command\n/decide"]
+    B -->|Visual Web UI| F["Web Dashboard\nRecord Form"]
+    C --> G["Decision Store"]
+    D --> G
+    E --> C
+    F --> G
+    G --> H[".decisions/active/\ndec_20260728_x8k2p9.md"]
+    G --> I[".decisions/index.json\n(auto-generated cache)"]

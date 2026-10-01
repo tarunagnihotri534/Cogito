@@ -1,0 +1,8 @@
+flowchart LR
+    A["Edit a file\nsrc/api/payments/checkout.ts"] --> B["PostToolUse Hook\n(Write / Edit)"]
+    B --> C["decision-tracker check\nsrc/api/payments/checkout.ts"]
+    C --> D["Match file against\nall decision scopes"]
+    D --> E{"Decisions\nfound?"}
+    E -->|Yes| F["Advisory warning injected\ninto AI context"]
+    E -->|No| G["Silent, no action"]
+    F --> H["'Payment endpoints are excluded\nfrom the extension (PCI scope) —\nproceed?'"]

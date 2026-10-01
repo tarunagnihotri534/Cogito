@@ -1,0 +1,17 @@
+# Smithery.ai configuration for decision-tracker
+# https://smithery.ai/docs/config
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      workspace:
+        type: string
+        description: Path to target repository workspace (defaults to current working directory)
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', 'decision-tracker@0.1.0', 'server', ...(config?.workspace ? [config.workspace] : [])]
+    })
+  exampleConfig:
+    workspace: "."

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.tarunagnihotri534/decision-tracker",
+  "title": "decision-tracker",
+  "description": "Institutional memory for your codebase. Captures architectural decisions and surfaces them automatically when relevant files are edited.",
+  "version": "0.1.0",
+  "websiteUrl": "https://github.com/tarunagnihotri534/decision-tracker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tarunagnihotri534/decision-tracker.git"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "decision-tracker",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "command": "decision-tracker",
+      "args": ["server"]
+    }
+  ]
+}

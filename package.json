@@ -25,7 +25,8 @@
     }
   },
   "bin": {
-    "decision-tracker": "./bin/decision-tracker.js"
+    "decision-tracker": "./bin/decision-tracker.js",
+    "decision-memory": "./bin/decision-tracker.js"
   },
   "files": [
     "dist",
@@ -40,12 +41,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tarunagnihotri534/decision-tracker.git"
+    "url": "git+https://github.com/tarunagnihotri534/decision-memory.git"
   },
-  "homepage": "https://github.com/tarunagnihotri534/decision-tracker#readme",
+  "homepage": "https://github.com/tarunagnihotri534/decision-memory#readme",
   "bugs": {
-    "url": "https://github.com/tarunagnihotri534/decision-tracker/issues"
+    "url": "https://github.com/tarunagnihotri534/decision-memory/issues"
   },
+  "author": "Tarun Agnihotri",
   "license": "MIT",
   "keywords": [
     "mcp",
@@ -72,7 +74,8 @@
     "lint": "tsc --noEmit",
     "dev": "tsx watch src/cli/index.ts",
     "test": "vitest run",
-    "cli": "tsx src/cli/index.ts"
+    "cli": "tsx src/cli/index.ts",
+    "prepublishOnly": "npm run lint && npm test && npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.5.0",

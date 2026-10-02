@@ -7,7 +7,7 @@
 
 [![npm version](https://img.shields.io/npm/v/cogito-cli.svg?color=6366f1&style=flat-square)](https://www.npmjs.com/package/cogito-cli)
 [![npm downloads](https://img.shields.io/npm/dm/cogito-cli.svg?color=38bdf8&style=flat-square)](https://www.npmjs.com/package/cogito-cli)
-[![CI / Release](https://img.shields.io/github/actions/workflow/status/tarunagnihotri534/decision-memory/release.yml?branch=main&style=flat-square&label=release)](https://github.com/tarunagnihotri534/decision-memory/actions)
+[![CI / Release](https://img.shields.io/github/actions/workflow/status/tarunagnihotri534/Cogito/release.yml?branch=main&style=flat-square&label=release)](https://github.com/tarunagnihotri534/Cogito/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-success.svg?style=flat-square)](https://nodejs.org)
 
@@ -346,7 +346,7 @@ if (!report.healthy) {
 **Tarun Agnihotri**
 - GitHub: [@tarunagnihotri534](https://github.com/tarunagnihotri534)
 - npm: [cogito-cli](https://www.npmjs.com/package/cogito-cli)
-- Repository: [tarunagnihotri534/decision-memory](https://github.com/tarunagnihotri534/decision-memory)
+- Repository: [tarunagnihotri534/Cogito](https://github.com/tarunagnihotri534/Cogito)
 
 ---
 

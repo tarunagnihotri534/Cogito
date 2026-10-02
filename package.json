@@ -42,11 +42,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tarunagnihotri534/decision-memory.git"
+    "url": "git+https://github.com/tarunagnihotri534/Cogito.git"
   },
-  "homepage": "https://github.com/tarunagnihotri534/decision-memory#readme",
+  "homepage": "https://github.com/tarunagnihotri534/Cogito#readme",
   "bugs": {
-    "url": "https://github.com/tarunagnihotri534/decision-memory/issues"
+    "url": "https://github.com/tarunagnihotri534/Cogito/issues"
   },
   "author": "Tarun Agnihotri",
   "license": "MIT",

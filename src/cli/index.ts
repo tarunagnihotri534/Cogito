@@ -44,7 +44,7 @@ const program = new Command();
 program
   .name('cogito')
   .description('Cogito: Institutional memory and architectural decision intelligence for your codebase')
-  .version('0.1.0');
+  .version('0.1.1');
 
 program
   .command('init')

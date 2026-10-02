@@ -1,4 +1,4 @@
-# Release Guide for decision-tracker
+# Release Guide for Cogito
 
 This document details the exact, step-by-step process for publishing and maintaining releases of `cogito`.
 
@@ -16,8 +16,7 @@ This document details the exact, step-by-step process for publishing and maintai
 
 2. **Repository Consistency**:
    - Confirm your GitHub repository URL matches `package.json`:
-     `https://github.com/tarunagnihotri534/decision-memory`
-   - If your GitHub repository is currently named `decision-memory`, rename it in **GitHub Settings -> General -> Repository name** to `cogito`. (GitHub automatically redirects git and web traffic, but keeping names uniform ensures provenance attestations align).
+     `https://github.com/tarunagnihotri534/Cogito`
 
 3. **npm Authentication in GitHub Actions**:
    - **For First Release (v0.1.0)**:
@@ -97,14 +96,14 @@ Pushing tag `v0.1.0` triggers the `.github/workflows/release.yml` workflow.
 3. **`docker-and-release`**:
    - Builds the production multi-stage, non-root container image.
    - Pushes images to GitHub Container Registry:
-     - `ghcr.io/tarunagnihotri534/decision-memory:0.1.0`
-     - `ghcr.io/tarunagnihotri534/decision-memory:latest`
+     - `ghcr.io/tarunagnihotri534/cogito:0.1.0`
+     - `ghcr.io/tarunagnihotri534/cogito:latest`
    - Parses the `0.1.0` release notes from `CHANGELOG.md` and creates a GitHub Release.
 
 4. **`post-publish-verify`**:
    - Spawns a clean `node:20-bookworm-slim` container.
    - Waits for npm registry replication.
-   - Executes `npx --yes decision-tracker@0.1.0 --version` to verify end-to-end user experience.
+   - Executes `npx --yes cogito-cli@latest --version` to verify end-to-end user experience.
 
 ---
 
@@ -119,17 +118,17 @@ After CI completes:
 
 2. **Verify CLI via npx**:
    ```bash
-   npx --yes decision-tracker@latest --version
+   npx --yes cogito@latest --version
    ```
    Should print: `0.1.0`.
 
 3. **Verify GitHub Release**:
-   - Visit: `https://github.com/tarunagnihotri534/decision-memory/releases/tag/v0.1.0`
+   - Visit: `https://github.com/tarunagnihotri534/Cogito/releases/tag/v0.1.0`
    - Confirm release notes and assets match.
 
 4. **Verify Docker Image**:
    ```bash
-   docker run --rm ghcr.io/tarunagnihotri534/decision-memory:0.1.0 --version
+   docker run --rm ghcr.io/tarunagnihotri534/cogito:latest --version
    ```
 
 5. **Submit Listings**:

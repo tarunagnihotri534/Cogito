@@ -118,8 +118,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ env.VERSION }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository_owner }}/cogito:${{ env.VERSION }}
+            ghcr.io/${{ github.repository_owner }}/cogito:latest
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

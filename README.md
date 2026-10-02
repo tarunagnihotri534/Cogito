@@ -13,6 +13,12 @@
 
 [Quick Start](#-quick-start) • [How It Works](#-how-it-works) • [Web Dashboard](#-web-dashboard) • [AI Integrations](#-ai-agent-integrations) • [CLI Reference](#-cli-reference) • [MCP Tools](#-mcp-tools-reference) • [TypeScript API](#-programmatic-api)
 
+<br />
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/Cogito/main/docs/images/demo.gif" alt="Cogito Terminal Demo" width="860" style="max-width: 100%; border-radius: 10px;" />
+</p>
+
 </div>
 
 ---

@@ -26,6 +26,7 @@
   },
   "bin": {
     "cogito": "bin/cogito.js",
+    "cogito-cli": "bin/cogito.js",
     "decision-tracker": "bin/cogito.js",
     "decision-memory": "bin/cogito.js"
   },

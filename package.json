@@ -25,9 +25,9 @@
     }
   },
   "bin": {
-    "cogito": "./bin/cogito.js",
-    "decision-tracker": "./bin/cogito.js",
-    "decision-memory": "./bin/cogito.js"
+    "cogito": "bin/cogito.js",
+    "decision-tracker": "bin/cogito.js",
+    "decision-memory": "bin/cogito.js"
   },
   "files": [
     "dist",

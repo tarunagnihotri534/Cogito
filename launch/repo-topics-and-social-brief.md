@@ -4,7 +4,7 @@
 
 ## 1. Suggested GitHub Repository Topics (Tags)
 
-Paste these topics directly into the **About -> Topics** section of the GitHub repository (`https://github.com/tarunagnihotri534/decision-tracker`):
+Paste these topics directly into the **About -> Topics** section of the GitHub repository (`https://github.com/tarunagnihotri534/decision-memory`):
 
 ```
 mcp
@@ -47,7 +47,7 @@ typescript
 
 1. **Top Left**:
    - Icon / Logo: 🧠 Glowing neon brain / node graph icon.
-   - Project Name: `decision-tracker` (Bold, 44px, Inter/Outfit).
+   - Project Name: `cogito` (Bold, 44px, Inter/Outfit).
    - Version Tag: `v0.1.0` in a sleek badge (indigo border with subtle fill).
 
 2. **Main Headline (Center Left)**:
@@ -58,7 +58,7 @@ typescript
 3. **Graphic / Mockup (Center Right)**:
    - A floating glassmorphic terminal window with subtle drop shadow:
      ```bash
-     $ decision-tracker check src/extension/client.ts
+     $ cogito check src/extension/client.ts
      ⚠️ 1 Architectural Decision matches:
      • [PCI Scope] Exclude payment APIs from extension
      ```
@@ -67,11 +67,11 @@ typescript
 
 4. **Bottom Bar**:
    - Left: `100% Local · Zero Token Bloat · MIT Open Source`
-   - Right: `github.com/tarunagnihotri534/decision-tracker`
+   - Right: `github.com/tarunagnihotri534/decision-memory`
 
 ---
 
 ## 3. GitHub Repository Description & Website
 
 - **Description**: Institutional memory for your codebase. Captures architectural decisions and surfaces them automatically when relevant files are edited.
-- **Website URL**: `https://github.com/tarunagnihotri534/decision-tracker#readme` (or npm package URL: `https://www.npmjs.com/package/decision-tracker`).
+- **Website URL**: `https://github.com/tarunagnihotri534/decision-memory#readme` (or npm package URL: `https://www.npmjs.com/package/cogito-cli`).

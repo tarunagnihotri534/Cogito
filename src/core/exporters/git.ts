@@ -10,7 +10,7 @@ export interface PreCommitHookResult {
 }
 
 export function installPreCommitHook(baseDir: string = process.cwd()): PreCommitHookResult {
-  const hookCommand = 'npx decision-tracker export --check';
+  const hookCommand = 'npx cogito export --check';
   const huskyDir = path.join(baseDir, '.husky');
 
   let hookPath: string;
@@ -68,15 +68,15 @@ export function installPreCommitHook(baseDir: string = process.cwd()): PreCommit
 
   if (fs.existsSync(hookPath)) {
     const existing = fs.readFileSync(hookPath, 'utf8');
-    if (!existing.includes('decision-tracker export --check')) {
+    if (!existing.includes('cogito export --check') && !existing.includes('decision-tracker export --check')) {
       const isCrlf = existing.includes('\r\n');
       const eol = isCrlf ? '\r\n' : '\n';
-      const newContent = existing.trimEnd() + eol + eol + '# decision-tracker sync check' + eol + hookCommand + eol;
+      const newContent = existing.trimEnd() + eol + eol + '# cogito sync check' + eol + hookCommand + eol;
       fs.writeFileSync(hookPath, newContent, 'utf8');
       updated = true;
     }
   } else {
-    const content = '#!/bin/sh' + '\n' + '# decision-tracker sync check' + '\n' + hookCommand + '\n';
+    const content = '#!/bin/sh' + '\n' + '# cogito sync check' + '\n' + hookCommand + '\n';
     fs.writeFileSync(hookPath, content, 'utf8');
     created = true;
   }

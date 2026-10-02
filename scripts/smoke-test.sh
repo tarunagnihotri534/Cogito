@@ -2,11 +2,11 @@
 set -euo pipefail
 
 echo "=========================================="
-echo "🧪 Running decision-tracker Smoke Test"
+echo "🧪 Running Cogito Smoke Test"
 echo "=========================================="
 
 # 1. Build and pack
-echo "📦 Packaging decision-tracker..."
+echo "📦 Packaging cogito-cli..."
 npm run build
 TGZ_NAME=$(npm pack --quiet | tail -n 1)
 TGZ_PATH="$(pwd)/$TGZ_NAME"
@@ -19,7 +19,7 @@ echo "✅ Packed tarball: $TGZ_PATH"
 
 # 2. Test npx directly against the tarball
 echo "🚀 Testing npx directly against tarball..."
-NPX_VERSION=$(npx --yes --package "$TGZ_PATH" decision-tracker --version)
+NPX_VERSION=$(npx --yes --package "$TGZ_PATH" cogito --version)
 echo "   Reported version via npx: $NPX_VERSION"
 if [ "$NPX_VERSION" != "0.1.0" ]; then
   echo "❌ Error: Expected version 0.1.0, got $NPX_VERSION"
@@ -48,8 +48,8 @@ git init
 git config user.name "Smoke Test Runner"
 git config user.email "test@example.com"
 
-echo "⚙️ Testing 'decision-tracker init'..."
-decision-tracker init
+echo "⚙️ Testing 'cogito init'..."
+cogito init
 
 if [ ! -d ".decisions" ]; then
   echo "❌ Error: .decisions directory was not created!"
@@ -57,8 +57,8 @@ if [ ! -d ".decisions" ]; then
 fi
 echo "✅ Init successful!"
 
-echo "📝 Testing 'decision-tracker record'..."
-decision-tracker record \
+echo "📝 Testing 'cogito record'..."
+cogito record \
   --summary "Isolate authentication tokens in HTTP-only cookies" \
   --rationale "Prevent XSS exfiltration of session credentials" \
   --scope "src/auth/**/*.ts" \
@@ -72,8 +72,8 @@ if [ -z "$CREATED_DECISION" ]; then
 fi
 echo "✅ Record successful: $CREATED_DECISION"
 
-echo "🔍 Testing 'decision-tracker check'..."
-CHECK_OUTPUT=$(decision-tracker check "src/auth/session.ts" --json)
+echo "🔍 Testing 'cogito check'..."
+CHECK_OUTPUT=$(cogito check "src/auth/session.ts" --json)
 if echo "$CHECK_OUTPUT" | grep -q "Isolate authentication tokens"; then
   echo "✅ Check successfully matched active decision!"
 else
@@ -81,17 +81,17 @@ else
   exit 1
 fi
 
-echo "📋 Testing 'decision-tracker list'..."
-decision-tracker list
+echo "📋 Testing 'cogito list'..."
+cogito list
 
-echo "📤 Testing 'decision-tracker export --target all'..."
-decision-tracker export --target all
+echo "📤 Testing 'cogito export --target all'..."
+cogito export --target all
 
-echo "🔬 Testing 'decision-tracker lint'..."
-decision-tracker lint
+echo "🔬 Testing 'cogito lint'..."
+cogito lint
 
-echo "🩺 Testing 'decision-tracker doctor'..."
-decision-tracker doctor
+echo "🩺 Testing 'cogito doctor'..."
+cogito doctor
 
 echo "=========================================="
 echo "🎉 ALL SMOKE TESTS PASSED SUCCESSFULLY!"

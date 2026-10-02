@@ -1,4 +1,4 @@
-name: 'Decision Tracker PR Advisory'
+name: 'Cogito PR Advisory'
 description: 'Checks PR changes against architectural decisions and posts a sticky advisory comment'
 author: 'Tarun Agnihotri'
 
@@ -32,7 +32,7 @@ runs:
       run: |
         git fetch origin ${{ inputs.base-ref }} --depth=1 || true
 
-    - name: Run Decision Tracker PR Check
+    - name: Run Cogito PR Check
       shell: bash
       env:
         BASE_REF: ${{ inputs.base-ref }}

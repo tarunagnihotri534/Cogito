@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "decision-tracker": {
+    "cogito": {
       "command": "npx",
-      "args": ["-y", "decision-tracker", "serve"]
+      "args": ["-y", "cogito-cli", "serve"]
     }
   }
 }

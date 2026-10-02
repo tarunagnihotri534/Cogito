@@ -1,4 +1,4 @@
-# Multi-stage production Dockerfile for decision-tracker
+# Multi-stage production Dockerfile for Cogito
 # Stage 1: Builder
 FROM node:20-bookworm-slim AS builder
 
@@ -20,7 +20,7 @@ RUN npm run build
 # Stage 2: Production runtime (minimal, secure, non-root)
 FROM node:20-bookworm-slim AS runner
 
-# Install git and ca-certificates (required by decision-tracker git integration and exporters)
+# Install git and ca-certificates (required by Cogito git integration and exporters)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     ca-certificates \
@@ -42,7 +42,7 @@ COPY schema ./schema
 COPY README.md LICENSE ./
 
 # Ensure correct executable permissions
-RUN chmod +x bin/decision-tracker.js
+RUN chmod +x bin/cogito.js bin/decision-tracker.js
 
 # Link binary globally inside container
 RUN npm link
@@ -58,5 +58,5 @@ USER node
 EXPOSE 3333
 
 # Default entrypoint runs the CLI
-ENTRYPOINT ["decision-tracker"]
+ENTRYPOINT ["cogito"]
 CMD ["--help"]

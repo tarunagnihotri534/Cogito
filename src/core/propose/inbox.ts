@@ -51,11 +51,11 @@ export function ensureInboxIgnored(baseDir: string = process.cwd()): boolean {
     }
     const isCrlf = content.includes('\r\n');
     const eol = isCrlf ? '\r\n' : '\n';
-    const updated = content.trimEnd() + eol + eol + '# decision-tracker inbox' + eol + ignorePattern + eol;
+    const updated = content.trimEnd() + eol + eol + '# cogito inbox' + eol + ignorePattern + eol;
     fs.writeFileSync(gitignorePath, updated, 'utf8');
     return true;
   } else {
-    fs.writeFileSync(gitignorePath, '# decision-tracker inbox\n' + ignorePattern + '\n', 'utf8');
+    fs.writeFileSync(gitignorePath, '# cogito inbox\n' + ignorePattern + '\n', 'utf8');
     return true;
   }
 }

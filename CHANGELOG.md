@@ -19,21 +19,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `get_decision_timeline`: Trace supersession history.
   - `run_doctor`: Identify stale decisions, orphaned scopes, and missing files.
 - **CLI Commands**:
-  - `decision-tracker init`: Scaffolds `.decisions/`, installs Claude Code hooks, and configures `.claude/` commands.
-  - `decision-tracker record`: Interactive or flag-driven decision authoring.
-  - `decision-tracker check`: Query matching decisions for specific file paths (supports `--json`).
-  - `decision-tracker list`: Display formatted decision summaries.
-  - `decision-tracker show`: Display complete decision details.
-  - `decision-tracker supersede`: Deprecate older decisions with full rationale linkage.
-  - `decision-tracker export`: Multi-agent export to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.github/copilot-instructions.md`, or custom targets with managed section markers.
-  - `decision-tracker import --format adr`: Bi-directional import from existing ADR directories with supersession resolution.
-  - `decision-tracker propose`: Extract candidate decisions from agent session transcripts.
-  - `decision-tracker review`: Review proposed candidate decisions before activating.
-  - `decision-tracker lint`: Validate decision markdown schemas and directory structure.
-  - `decision-tracker doctor`: Diagnostic health check for scope staleness.
-  - `decision-tracker search`: Full-text search across summaries, rationale, and notes.
-  - `decision-tracker timeline`: Visual tree representation of decision supersessions.
-  - `decision-tracker dashboard`: Local visual web interface for exploring and managing decisions.
+  - `cogito init`: Scaffolds `.decisions/`, installs Claude Code hooks, and configures `.claude/` commands.
+  - `cogito record`: Interactive or flag-driven decision authoring.
+  - `cogito check`: Query matching decisions for specific file paths (supports `--json`).
+  - `cogito list`: Display formatted decision summaries.
+  - `cogito show`: Display complete decision details.
+  - `cogito supersede`: Deprecate older decisions with full rationale linkage.
+  - `cogito export`: Multi-agent export to `.cursorrules`, `CLAUDE.md`, `.windsurfrules`, `.github/copilot-instructions.md`, or custom targets with managed section markers.
+  - `cogito import --format adr`: Bi-directional import from existing ADR directories with supersession resolution.
+  - `cogito propose`: Extract candidate decisions from agent session transcripts.
+  - `cogito review`: Review proposed candidate decisions before activating.
+  - `cogito lint`: Validate decision markdown schemas and directory structure.
+  - `cogito doctor`: Diagnostic health check for scope staleness.
+  - `cogito search`: Full-text search across summaries, rationale, and notes.
+  - `cogito timeline`: Visual tree representation of decision supersessions.
+  - `cogito dashboard`: Local visual web interface for exploring and managing decisions.
 - **Visual Web Dashboard**:
   - Express API server + React frontend with dark-mode slate theme.
   - Interactive decision browsing, filtering, search, and recording.

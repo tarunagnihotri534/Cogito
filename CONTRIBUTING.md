@@ -1,6 +1,6 @@
 # Contributing to decision-tracker
 
-Thank you for your interest in contributing to `decision-tracker`! This project provides institutional memory for codebases, bridging human architectural decisions and AI coding agents.
+Thank you for your interest in contributing to `cogito`! This project provides institutional memory for codebases, bridging human architectural decisions and AI coding agents.
 
 ## Development Setup
 
@@ -12,7 +12,7 @@ Thank you for your interest in contributing to `decision-tracker`! This project 
 ### Clone and Install
 
 ```bash
-git clone https://github.com/tarunagnihotri534/decision-tracker.git
+git clone https://github.com/tarunagnihotri534/decision-memory.git
 cd decision-tracker
 npm install
 ```

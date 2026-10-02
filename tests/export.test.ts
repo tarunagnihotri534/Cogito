@@ -372,7 +372,7 @@ describe('Feature 3: Multi-Agent Export', () => {
       expect(res.created).toBe(true);
       const hookPath = path.join(tmpDir, '.husky', 'pre-commit');
       expect(fs.existsSync(hookPath)).toBe(true);
-      expect(fs.readFileSync(hookPath, 'utf8')).toContain('npx decision-tracker export --check');
+      expect(fs.readFileSync(hookPath, 'utf8')).toContain('npx cogito export --check');
 
       // Second run is idempotent
       const res2 = installPreCommitHook(tmpDir);
@@ -389,7 +389,7 @@ describe('Feature 3: Multi-Agent Export', () => {
       expect(res.created).toBe(true);
       const hookPath = path.join(gitHooksDir, 'pre-commit');
       expect(fs.existsSync(hookPath)).toBe(true);
-      expect(fs.readFileSync(hookPath, 'utf8')).toContain('npx decision-tracker export --check');
+      expect(fs.readFileSync(hookPath, 'utf8')).toContain('npx cogito export --check');
     });
 
     it('appends to existing pre-commit hook without overwriting existing commands', () => {
@@ -402,7 +402,7 @@ describe('Feature 3: Multi-Agent Export', () => {
       expect(res.updated).toBe(true);
       const content = fs.readFileSync(hookPath, 'utf8');
       expect(content).toContain('npm run lint');
-      expect(content).toContain('npx decision-tracker export --check');
+      expect(content).toContain('npx cogito export --check');
     });
   });
 

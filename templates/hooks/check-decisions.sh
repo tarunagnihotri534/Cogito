@@ -38,10 +38,12 @@ fi
 DECISIONS=""
 if [ -f "dist/cli/index.js" ]; then
   DECISIONS=$(node dist/cli/index.js check "$FILE_PATH" --json 2>/dev/null || echo "[]")
+elif command -v cogito >/dev/null 2>&1; then
+  DECISIONS=$(cogito check "$FILE_PATH" --json 2>/dev/null || echo "[]")
 elif command -v decision-tracker >/dev/null 2>&1; then
   DECISIONS=$(decision-tracker check "$FILE_PATH" --json 2>/dev/null || echo "[]")
 else
-  DECISIONS=$(npx --yes decision-tracker check "$FILE_PATH" --json 2>/dev/null || echo "[]")
+  DECISIONS=$(npx --yes cogito-cli check "$FILE_PATH" --json 2>/dev/null || echo "[]")
 fi
 
 # Check if any decisions were found

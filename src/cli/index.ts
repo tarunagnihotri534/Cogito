@@ -42,8 +42,8 @@ const __dirname = path.dirname(__filename);
 const program = new Command();
 
 program
-  .name('decision-tracker')
-  .description('CLI tool for managing architectural codebase decisions')
+  .name('cogito')
+  .description('Cogito: Institutional memory and architectural decision intelligence for your codebase')
   .version('0.1.0');
 
 program
@@ -112,7 +112,7 @@ program
           hooks: [
             {
               type: 'command',
-              command: 'decision-tracker hook post-tool-use'
+              command: 'cogito hook post-tool-use'
             }
           ]
         }
@@ -122,7 +122,7 @@ program
           hooks: [
             {
               type: 'command',
-              command: 'decision-tracker hook session-end'
+              command: 'cogito hook session-end'
             }
           ]
         }
@@ -132,7 +132,7 @@ program
       console.log('✅ Configured Claude Code hooks in .claude/settings.json');
     } catch {}
 
-    console.log('\n🚀 Decision Tracker ready!');
+    console.log('\n🚀 Cogito ready!');
   });
 
 program
@@ -462,7 +462,7 @@ program
                 }
               }
             }
-            console.error(`\nRun 'decision-tracker export' to synchronize.\n`);
+            console.error(`\nRun 'cogito export' to synchronize.\n`);
           }
         }
 
@@ -600,7 +600,7 @@ program
         console.log('');
       });
 
-      console.log(`Run 'decision-tracker review' to review and approve proposals.\n`);
+      console.log(`Run 'cogito review' to review and approve proposals.\n`);
     } catch (err: any) {
       if (options.json) {
         console.log(JSON.stringify({ error: err.message }, null, 2));

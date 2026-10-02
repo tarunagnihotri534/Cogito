@@ -1,6 +1,6 @@
 # Release Guide for decision-tracker
 
-This document details the exact, step-by-step process for publishing and maintaining releases of `decision-tracker`.
+This document details the exact, step-by-step process for publishing and maintaining releases of `cogito`.
 
 ---
 
@@ -16,8 +16,8 @@ This document details the exact, step-by-step process for publishing and maintai
 
 2. **Repository Consistency**:
    - Confirm your GitHub repository URL matches `package.json`:
-     `https://github.com/tarunagnihotri534/decision-tracker`
-   - If your GitHub repository is currently named `decision-memory`, rename it in **GitHub Settings -> General -> Repository name** to `decision-tracker`. (GitHub automatically redirects git and web traffic, but keeping names uniform ensures provenance attestations align).
+     `https://github.com/tarunagnihotri534/decision-memory`
+   - If your GitHub repository is currently named `decision-memory`, rename it in **GitHub Settings -> General -> Repository name** to `cogito`. (GitHub automatically redirects git and web traffic, but keeping names uniform ensures provenance attestations align).
 
 3. **npm Authentication in GitHub Actions**:
    - **For First Release (v0.1.0)**:
@@ -26,11 +26,11 @@ This document details the exact, step-by-step process for publishing and maintai
      - Name: `NPM_TOKEN`
      - Value: `<your-npm-token>`
    - **Configuring Trusted Publishing (OIDC) for Future Releases**:
-     - Once `decision-tracker` has been published to npm at least once, navigate to:
-       `https://www.npmjs.com/package/decision-tracker/access`
+     - Once `cogito` has been published to npm at least once, navigate to:
+       `https://www.npmjs.com/package/cogito-cli/access`
      - Under **Trusted Publishing**, click **Add new publisher -> GitHub Actions**.
      - Set Owner: `tarunagnihotri534`
-     - Set Repository: `decision-tracker`
+     - Set Repository: `cogito`
      - Set Workflow filename: `release.yml`
      - Once configured, you can remove the `NPM_TOKEN` secret if desired.
 
@@ -97,8 +97,8 @@ Pushing tag `v0.1.0` triggers the `.github/workflows/release.yml` workflow.
 3. **`docker-and-release`**:
    - Builds the production multi-stage, non-root container image.
    - Pushes images to GitHub Container Registry:
-     - `ghcr.io/tarunagnihotri534/decision-tracker:0.1.0`
-     - `ghcr.io/tarunagnihotri534/decision-tracker:latest`
+     - `ghcr.io/tarunagnihotri534/decision-memory:0.1.0`
+     - `ghcr.io/tarunagnihotri534/decision-memory:latest`
    - Parses the `0.1.0` release notes from `CHANGELOG.md` and creates a GitHub Release.
 
 4. **`post-publish-verify`**:
@@ -113,7 +113,7 @@ Pushing tag `v0.1.0` triggers the `.github/workflows/release.yml` workflow.
 After CI completes:
 
 1. **Verify npm Package & Provenance**:
-   - Visit: `https://www.npmjs.com/package/decision-tracker`
+   - Visit: `https://www.npmjs.com/package/cogito-cli`
    - Verify the version reads `0.1.0`.
    - Verify the **Provenance** checkmark badge appears on the right sidebar.
 
@@ -124,12 +124,12 @@ After CI completes:
    Should print: `0.1.0`.
 
 3. **Verify GitHub Release**:
-   - Visit: `https://github.com/tarunagnihotri534/decision-tracker/releases/tag/v0.1.0`
+   - Visit: `https://github.com/tarunagnihotri534/decision-memory/releases/tag/v0.1.0`
    - Confirm release notes and assets match.
 
 4. **Verify Docker Image**:
    ```bash
-   docker run --rm ghcr.io/tarunagnihotri534/decision-tracker:0.1.0 --version
+   docker run --rm ghcr.io/tarunagnihotri534/decision-memory:0.1.0 --version
    ```
 
 5. **Submit Listings**:

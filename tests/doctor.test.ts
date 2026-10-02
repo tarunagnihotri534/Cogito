@@ -5,7 +5,7 @@ import os from 'os';
 import { runDoctor, collectRepoFiles } from '../src/core/doctor.js';
 import { initStorage, recordDecision } from '../src/core/store.js';
 
-describe('Feature 4: Staleness Detection (decision-tracker doctor)', () => {
+describe('Feature 4: Staleness Detection (cogito doctor)', () => {
   let tmpDir: string;
 
   beforeEach(() => {

@@ -1,24 +1,24 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.tarunagnihotri534/decision-tracker",
-  "title": "decision-tracker",
-  "description": "Institutional memory for your codebase. Captures architectural decisions and surfaces them automatically when relevant files are edited.",
+  "name": "io.github.tarunagnihotri534/cogito",
+  "title": "cogito",
+  "description": "Institutional memory for your codebase. Cogito captures architectural decisions and surfaces them automatically when relevant files are edited.",
   "version": "0.1.0",
-  "websiteUrl": "https://github.com/tarunagnihotri534/decision-tracker",
+  "websiteUrl": "https://github.com/tarunagnihotri534/decision-memory",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tarunagnihotri534/decision-tracker.git"
+    "url": "https://github.com/tarunagnihotri534/decision-memory.git"
   },
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "decision-tracker",
+      "identifier": "cogito-cli",
       "version": "0.1.0",
       "transport": {
         "type": "stdio"
       },
-      "command": "decision-tracker",
-      "args": ["server"]
+      "command": "cogito",
+      "args": ["serve"]
     }
   ]
 }

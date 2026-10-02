@@ -43,7 +43,7 @@ export function handlePostToolUse(
 
   const systemMessage = `Advisory: ${matches.length} existing architectural decision(s) may apply to this file:
 ${summaries}
-Review with: decision-tracker check ${filePath}
+Review with: cogito check ${filePath}
 These are advisory — you may proceed, but consider whether your changes align with these decisions.`;
 
   return {

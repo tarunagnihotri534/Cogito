@@ -125,7 +125,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           body_path: RELEASE_NOTES.md
-          name: "decision-tracker v${{ env.VERSION }}"
+          name: "Cogito v${{ env.VERSION }}"
           tag_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
@@ -146,11 +146,11 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           echo "Waiting 20 seconds for npm registry CDN consistency..."
           sleep 20
-          echo "Running: npx --yes decision-tracker@${VERSION} --version"
-          REPORTED=$(npx --yes "decision-tracker@${VERSION}" --version)
+          echo "Running: npx --yes cogito-cli@${VERSION} --version"
+          REPORTED=$(npx --yes "cogito-cli@${VERSION}" --version)
           echo "Reported version: $REPORTED"
           if [ "$REPORTED" != "$VERSION" ]; then
             echo "Error: Version mismatch! Expected $VERSION, got $REPORTED"
             exit 1
           fi
-          echo "Verification passed! decision-tracker@${VERSION} is live and functional."
+          echo "Verification passed! cogito-cli@${VERSION} is live and functional."

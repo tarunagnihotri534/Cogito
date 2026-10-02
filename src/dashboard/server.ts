@@ -204,12 +204,12 @@ export function startDashboardServer(
         <html lang="en">
           <head>
             <meta charset="UTF-8" />
-            <title>Decision Tracker Dashboard</title>
+            <title>Cogito Dashboard</title>
             <script src="https://cdn.tailwindcss.com"></script>
           </head>
           <body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-8">
             <div class="max-w-4xl mx-auto">
-              <h1 class="text-3xl font-bold text-indigo-400 mb-4">🧠 Decision Tracker Dashboard</h1>
+              <h1 class="text-3xl font-bold text-indigo-400 mb-4">🧠 Cogito Dashboard</h1>
               <p class="text-slate-400 mb-6">Backend API server is running on port ${port}. Run <code>npm run build</code> to compile the frontend interface.</p>
               
               <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">

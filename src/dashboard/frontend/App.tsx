@@ -71,17 +71,17 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-lg">
-              D
+              C
             </div>
             <div>
               <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-2">
-                Decision Tracker
+                Cogito
                 <span className="text-[10px] font-mono font-medium px-2 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
-                  Memory v1.0
+                  Decision Memory
                 </span>
               </h1>
               <p className="text-xs text-slate-400">
-                Architectural context & advisory rules for your codebase
+                Institutional architectural memory & intelligence for your codebase
               </p>
             </div>
           </div>

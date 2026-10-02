@@ -31,25 +31,25 @@ We tried storing this context in Notion. The AI never read it.
 We tried storing Architecture Decision Records (ADRs) in `docs/adr/`. They rotted within weeks.  
 We tried putting comments at the top of files. Developers deleted them during refactors.
 
-So we built **[decision-tracker](https://github.com/tarunagnihotri534/decision-tracker)**.
+So we built **[decision-tracker](https://github.com/tarunagnihotri534/decision-memory)**.
 
 ---
 
 ## What is decision-tracker?
 
-`decision-tracker` is an open-source CLI and Model Context Protocol (MCP) server that acts as an **always-on institutional memory** for your codebase.
+`cogito` is an open-source CLI and Model Context Protocol (MCP) server that acts as an **always-on institutional memory** for your codebase.
 
-Instead of passive docs, `decision-tracker` stores architectural choices as structured, scoped Markdown files in `.decisions/` and **surfaces them at the precise second a matching file is touched**.
+Instead of passive docs, `cogito` stores architectural choices as structured, scoped Markdown files in `.decisions/` and **surfaces them at the precise second a matching file is touched**.
 
 [INSERT SCREENSHOT: Terminal showing advisory alert when checkout.ts is edited]
 
 ### How it works: Zero Token Bloat
 
-Unlike static rule files that dump hundreds of guidelines into every turn, `decision-tracker` uses fast (<5ms) glob matching:
+Unlike static rule files that dump hundreds of guidelines into every turn, `cogito` uses fast (<5ms) glob matching:
 
 1. You record an architectural constraint with a target scope:
    ```bash
-   npx decision-tracker record \
+   npx cogito record \
      --summary "Do not expose payment APIs to browser extension" \
      --rationale "Extension context has weaker isolation; brings extension into PCI scope" \
      --scope "src/api/payments/**/*.ts,src/extension/**/*.ts" \
@@ -100,11 +100,11 @@ It's **advisory, not blocking**. It doesn't break builds or prevent urgent hotfi
 
 ## Quick Setup (Under 2 Minutes)
 
-`decision-tracker` requires Node 20+ and works with your existing tools without lock-in.
+`cogito` requires Node 20+ and works with your existing tools without lock-in.
 
 ### 1. Initialize your project
 ```bash
-npx decision-tracker init
+npx cogito init
 ```
 This scaffolds `.decisions/`, installs Claude Code hooks, and configures `.claude/settings.json`.
 
@@ -116,7 +116,7 @@ It's already configured! The hook triggers automatically on `Write` and `Edit` t
 #### For Cursor, Windsurf, or Copilot
 Export your decisions into your editor's native rule format:
 ```bash
-npx decision-tracker export --target all
+npx cogito export --target all
 ```
 This automatically updates managed sections in `.cursorrules`, `.cursor/rules/*.mdc`, `CLAUDE.md`, and `.github/copilot-instructions.md`.
 
@@ -136,7 +136,7 @@ Add to your MCP configuration:
 ### 3. Visual Web Dashboard
 Prefer a visual view? Run:
 ```bash
-npx decision-tracker dashboard
+npx cogito dashboard
 ```
 This opens a local React dashboard where you can browse the supersession timeline graph, search decisions with relevance ranking, and run health diagnostics on your decision scopes.
 
@@ -146,20 +146,20 @@ This opens a local React dashboard where you can browse the supersession timelin
 
 ## Honest Limitations
 
-We want to be upfront about what `decision-tracker` does and does not do:
+We want to be upfront about what `cogito` does and does not do:
 
-1. **It's only as good as what you record**: If an architectural choice is kept purely in someone's head and never recorded, no tool can guess it. However, `decision-tracker propose` can scan your AI session transcripts and suggest candidate decisions for you to approve in one keystroke.
+1. **It's only as good as what you record**: If an architectural choice is kept purely in someone's head and never recorded, no tool can guess it. However, `cogito propose` can scan your AI session transcripts and suggest candidate decisions for you to approve in one keystroke.
 2. **File-level and glob-level granularity**: Scopes match on file paths and glob patterns. It does not perform semantic AST function-level boundaries (though our opt-in import matcher helps detect dependencies).
-3. **Advisory by design**: By default, it will not prevent git commits unless you explicitly install our pre-commit hook (`decision-tracker export --install-pre-commit`). We believe developer tools should empower, not get in the way.
+3. **Advisory by design**: By default, it will not prevent git commits unless you explicitly install our pre-commit hook (`cogito export --install-pre-commit`). We believe developer tools should empower, not get in the way.
 
 ---
 
 ## Try it Out & Get Involved
 
-`decision-tracker` is 100% open source under the MIT License. Nothing leaves your machine — no telemetry, no clouds, no tracking.
+`cogito` is 100% open source under the MIT License. Nothing leaves your machine — no telemetry, no clouds, no tracking.
 
-- **GitHub Repository**: [tarunagnihotri534/decision-tracker](https://github.com/tarunagnihotri534/decision-tracker)
-- **npm Package**: [decision-tracker](https://www.npmjs.com/package/decision-tracker)
+- **GitHub Repository**: [tarunagnihotri534/decision-memory](https://github.com/tarunagnihotri534/decision-memory)
+- **npm Package**: [decision-tracker](https://www.npmjs.com/package/cogito-cli)
 - **Release Version**: `0.1.0`
 
 If you're building with AI coding agents and tired of repeating yourself across sessions, give it a star, test it in your repo, and share your feedback!

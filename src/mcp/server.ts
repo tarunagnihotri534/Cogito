@@ -26,7 +26,7 @@ import { z } from 'zod';
 export function createServer(baseDir: string = process.cwd()): Server {
   const server = new Server(
     {
-      name: 'decision-tracker',
+      name: 'cogito',
       version: '0.1.0'
     },
     {

@@ -11,6 +11,6 @@ For each distinct decision identified:
 6. State optional **context** or **consequences** if discussed.
 
 Then invoke the MCP tool `record_decision` or run the CLI command:
-`decision-tracker record --summary "..." --rationale "..." --scope "..." --tags "..."`
+`cogito record --summary "..." --rationale "..." --scope "..." --tags "..."`
 
 Confirm to the user once all architectural decisions have been recorded.

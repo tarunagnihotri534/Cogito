@@ -29,7 +29,7 @@ export function formatDecisionsMarkdown(
   const lines: string[] = [
     '## Architectural Decisions',
     '',
-    '> Advisory architectural decisions tracked by decision-tracker. Consult before modifying matching files.',
+    '> Advisory architectural decisions tracked by Cogito. Consult before modifying matching files.',
     ''
   ];
 
@@ -60,7 +60,7 @@ export function formatDecisionsMarkdown(
 
   if (active.length > maxDecisions) {
     lines.push(
-      `> ... and ${active.length - maxDecisions} more active decisions. Run \`decision-tracker list\` to view all.`
+      `> ... and ${active.length - maxDecisions} more active decisions. Run \`cogito list\` to view all.`
     );
     lines.push('');
   }

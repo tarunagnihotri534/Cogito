@@ -12,15 +12,15 @@ Copy and paste these snippets directly into new Pull Requests on the correspondi
 - **PR Description**:
   ```markdown
   ### Summary
-  Adds `decision-tracker`, an open-source MCP server and CLI that acts as institutional memory for codebases. It captures architectural decisions as scoped Markdown and automatically surfaces them when matching files are edited.
+  Adds `cogito`, an open-source MCP server and CLI that acts as institutional memory for codebases. It captures architectural decisions as scoped Markdown and automatically surfaces them when matching files are edited.
 
-  - **Repo**: https://github.com/tarunagnihotri534/decision-tracker
-  - **npm**: https://www.npmjs.com/package/decision-tracker
+  - **Repo**: https://github.com/tarunagnihotri534/decision-memory
+  - **npm**: https://www.npmjs.com/package/cogito-cli
   - **License**: MIT
   ```
 - **Entry Markdown**:
   ```markdown
-  - [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker) - Institutional memory for codebases that captures architectural decisions and surfaces them automatically when matching files are edited.
+  - [decision-tracker](https://github.com/tarunagnihotri534/decision-memory) - Institutional memory for codebases that captures architectural decisions and surfaces them automatically when matching files are edited.
   ```
 
 ---
@@ -32,7 +32,7 @@ Copy and paste these snippets directly into new Pull Requests on the correspondi
 - **PR Title**: `Add decision-tracker (Architectural context & decision memory)`
 - **Entry Markdown**:
   ```markdown
-  - [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker) - Capture the *why* behind architectural decisions and surface them as zero-latency advisories during AI coding sessions.
+  - [decision-tracker](https://github.com/tarunagnihotri534/decision-memory) - Capture the *why* behind architectural decisions and surface them as zero-latency advisories during AI coding sessions.
   ```
 
 ---
@@ -45,11 +45,11 @@ Copy and paste these snippets directly into new Pull Requests on the correspondi
 - **PR Description**:
   ```markdown
   ### Description
-  Adds `decision-tracker`, a tool specifically designed for Claude Code and modern AI coding agents. Includes automated setup of `PostToolUse` hooks, `/decide` slash commands, and multi-agent export sync (`.cursorrules`, `CLAUDE.md`, etc.).
+  Adds `cogito`, a tool specifically designed for Claude Code and modern AI coding agents. Includes automated setup of `PostToolUse` hooks, `/decide` slash commands, and multi-agent export sync (`.cursorrules`, `CLAUDE.md`, etc.).
   ```
 - **Entry Markdown**:
   ```markdown
-  - [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker) - Institutional memory for Claude Code with automated `PostToolUse` hooks that surface architectural constraints when matching files are edited.
+  - [decision-tracker](https://github.com/tarunagnihotri534/decision-memory) - Institutional memory for Claude Code with automated `PostToolUse` hooks that surface architectural constraints when matching files are edited.
   ```
 
 ---
@@ -61,5 +61,5 @@ Copy and paste these snippets directly into new Pull Requests on the correspondi
 - **PR Title**: `Add decision-tracker: Scoped rule sync and lifecycle management for Cursor`
 - **Entry Markdown**:
   ```markdown
-  - [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker) - Manage architectural decisions and automatically export scoped `.cursor/rules/*.mdc` and `.cursorrules` with lifecycle and supersession tracking.
+  - [decision-tracker](https://github.com/tarunagnihotri534/decision-memory) - Manage architectural decisions and automatically export scoped `.cursor/rules/*.mdc` and `.cursorrules` with lifecycle and supersession tracking.
   ```

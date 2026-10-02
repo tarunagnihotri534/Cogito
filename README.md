@@ -1,20 +1,20 @@
-# decision-tracker
+# Cogito
 
-[![npm version](https://img.shields.io/npm/v/decision-tracker.svg?color=indigo)](https://www.npmjs.com/package/decision-tracker)
-[![CI / Release](https://github.com/tarunagnihotri534/decision-tracker/actions/workflows/release.yml/badge.svg)](https://github.com/tarunagnihotri534/decision-tracker/actions)
+[![npm version](https://img.shields.io/npm/v/cogito-cli.svg?color=indigo)](https://www.npmjs.com/package/cogito-cli)
+[![CI / Release](https://github.com/tarunagnihotri534/decision-memory/actions/workflows/release.yml/badge.svg)](https://github.com/tarunagnihotri534/decision-memory/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![npm provenance](https://img.shields.io/badge/provenance-verified-brightgreen.svg)](https://www.npmjs.com/package/decision-tracker)
+[![npm provenance](https://img.shields.io/badge/provenance-verified-brightgreen.svg)](https://www.npmjs.com/package/cogito-cli)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-success.svg)](https://nodejs.org)
 
 ```bash
 # 3-line quick start
-npx decision-tracker init
-npx decision-tracker record --summary "Do not expose payment APIs to extension" --rationale "PCI scope" --scope "src/extension/**/*.ts"
-npx decision-tracker check src/extension/api/client.ts
+npx cogito init
+npx cogito record --summary "Do not expose payment APIs to extension" --rationale "PCI scope" --scope "src/extension/**/*.ts"
+npx cogito check src/extension/api/client.ts
 ```
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/demo.gif" alt="decision-tracker demo" width="100%" />
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/images/demo.gif" alt="decision-tracker demo" width="100%" />
 </p>
 
 Institutional memory for your codebase. Captures the *why* behind architectural decisions and surfaces them automatically when matching files are edited.
@@ -23,7 +23,7 @@ Every codebase accumulates architectural choices that aren't obvious from readin
 
 When a new developer (or an AI assistant like Claude Code or Copilot) works in that area later, they lack this historical context. They re-introduce caching. They attempt to connect the extension directly to payments. They make the exact same mistakes because the *why* was never persisted alongside the codebase.
 
-**decision-tracker** captures these decisions as structured, scoped Markdown files and surfaces them at the precise moment they matter — when you or your AI agent modify affected code:
+**Cogito** captures these decisions as structured, scoped Markdown files and surfaces them at the precise moment they matter — when you or your AI agent modify affected code:
 
 - *"We chose not to expose payment endpoints to the browser extension because of PCI DSS compliance scope implications."*
 - *"Kept the auth module synchronous to preserve backward compatibility with existing SDK v1 consumers."*
@@ -41,13 +41,13 @@ It's advisory, not blocking. A helpful nudge that says: *"Hey, this area of the 
 When an architectural choice is made during a coding session, it gets captured and stored as a scoped, queryable markdown file.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/recording-a-decision.svg" alt="Recording a decision" width="100%" />
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/images/recording-a-decision.svg" alt="Recording a decision" width="100%" />
 </p>
 
 <details>
 <summary>View Mermaid source</summary>
 
-[docs/diagrams/recording-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/recording-a-decision.mmd)
+[docs/diagrams/recording-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/diagrams/recording-a-decision.mmd)
 
 </details>
 
@@ -56,13 +56,13 @@ When an architectural choice is made during a coding session, it gets captured a
 When code is edited — by a human developer or an AI assistant — relevant decisions are automatically surfaced as advisory context.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/surfacing-at-the-right-moment.svg" alt="Surfacing at the right moment" width="100%" />
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/images/surfacing-at-the-right-moment.svg" alt="Surfacing at the right moment" width="100%" />
 </p>
 
 <details>
 <summary>View Mermaid source</summary>
 
-[docs/diagrams/surfacing-at-the-right-moment.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/surfacing-at-the-right-moment.mmd)
+[docs/diagrams/surfacing-at-the-right-moment.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/diagrams/surfacing-at-the-right-moment.mmd)
 
 </details>
 
@@ -71,26 +71,26 @@ When code is edited — by a human developer or an AI assistant — relevant dec
 Decisions aren't permanent — they evolve as project requirements change.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/lifecycle-of-a-decision.svg" alt="Lifecycle of a decision" width="100%" />
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/images/lifecycle-of-a-decision.svg" alt="Lifecycle of a decision" width="100%" />
 </p>
 
 <details>
 <summary>View Mermaid source</summary>
 
-[docs/diagrams/lifecycle-of-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/lifecycle-of-a-decision.mmd)
+[docs/diagrams/lifecycle-of-a-decision.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/diagrams/lifecycle-of-a-decision.mmd)
 
 </details>
 
 ### Where it fits in your workflow
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/images/workflow-fit.svg" alt="Where it fits in your workflow" width="100%" />
+  <img src="https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/images/workflow-fit.svg" alt="Where it fits in your workflow" width="100%" />
 </p>
 
 <details>
 <summary>View Mermaid source</summary>
 
-[docs/diagrams/workflow-fit.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-tracker/main/docs/diagrams/workflow-fit.mmd)
+[docs/diagrams/workflow-fit.mmd](https://raw.githubusercontent.com/tarunagnihotri534/decision-memory/main/docs/diagrams/workflow-fit.mmd)
 
 </details>
 
@@ -101,20 +101,20 @@ Decisions aren't permanent — they evolve as project requirements change.
 ### Install
 
 ```bash
-npm install -g decision-tracker
+npm install -g cogito-cli
 ```
 
 Or use directly without global installation:
 
 ```bash
-npx decision-tracker init
+npx cogito init
 ```
 
 ### Initialize in your project
 
 ```bash
 cd your-project
-decision-tracker init
+cogito init
 ```
 
 This creates:
@@ -129,7 +129,7 @@ This creates:
 ### Record your first decision
 
 ```bash
-decision-tracker record \
+cogito record \
   --summary "Use Zod for all runtime validation" \
   --rationale "Type-safe, composable, works seamlessly with TS type inference" \
   --scope "src/**/*.ts,api/**/*.ts" \
@@ -140,7 +140,7 @@ decision-tracker record \
 ### Check decisions for a file
 
 ```bash
-decision-tracker check src/api/users.ts
+cogito check src/api/users.ts
 ```
 
 Output:
@@ -161,10 +161,10 @@ Author:    tarunagnihotri
 
 ## Web dashboard
 
-`decision-tracker` includes a local React + Tailwind CSS dashboard for inspecting, searching, and managing decisions visually alongside the CLI and MCP server workflows.
+`cogito` includes a local React + Tailwind CSS dashboard for inspecting, searching, and managing decisions visually alongside the CLI and MCP server workflows.
 
 ```bash
-decision-tracker dashboard --port 3333
+cogito dashboard --port 3333
 ```
 
 - **Interactive Table & Grid**: Filter decisions by status (`active`, `superseded`, `archived`) and tag sets.
@@ -175,11 +175,11 @@ decision-tracker dashboard --port 3333
 
 ## Integration with Claude Code
 
-`decision-tracker` integrates natively with Claude Code as an **MCP server** (so Claude can record and query decisions) and as a **PostToolUse hook** (so Claude is automatically warned about relevant decisions when editing files).
+`cogito` integrates natively with Claude Code as an **MCP server** (so Claude can record and query decisions) and as a **PostToolUse hook** (so Claude is automatically warned about relevant decisions when editing files).
 
 ### 1. MCP Server setup
 
-Add `decision-tracker` to your Claude Code MCP configuration (`.claude/settings.json`):
+Add `cogito` to your Claude Code MCP configuration (`.claude/settings.json`):
 
 ```json
 {
@@ -205,7 +205,7 @@ Claude automatically invokes `query_decisions` when analyzing architecture, and 
 
 ### 2. PostToolUse hook setup
 
-`decision-tracker init` automatically creates `.claude/hooks/check-decisions.sh` and configures `.claude/settings.json`:
+`cogito init` automatically creates `.claude/hooks/check-decisions.sh` and configures `.claude/settings.json`:
 
 ```json
 {
@@ -229,7 +229,7 @@ The hook runs after every `Write` or `Edit` tool call. If the file being edited 
 
 ### 3. `/decide` slash command
 
-`decision-tracker init` copies a custom slash command to `.claude/commands/decide.md`. Run it during a conversation:
+`cogito init` copies a custom slash command to `.claude/commands/decide.md`. Run it during a conversation:
 
 ```text
 /decide
@@ -241,14 +241,14 @@ Claude will review the conversation, extract any architectural decisions that we
 
 ## Integration with GitHub Copilot CLI & Git
 
-GitHub Copilot CLI (`gh copilot`) and Git workflows can incorporate `decision-tracker` via shell scripts and Git hooks.
+GitHub Copilot CLI (`gh copilot`) and Git workflows can incorporate `cogito` via shell scripts and Git hooks.
 
 ### 1. Pre-check before asking Copilot
 
 Check governing decisions before requesting edits from Copilot:
 
 ```bash
-decision-tracker check src/api/auth.ts
+cogito check src/api/auth.ts
 gh copilot suggest "add OAuth support to src/api/auth.ts"
 ```
 
@@ -262,7 +262,7 @@ copilot-edit() {
   shift
 
   local decisions
-  decisions=$(decision-tracker check "$file" 2>/dev/null)
+  decisions=$(cogito check "$file" 2>/dev/null)
   if [ -n "$decisions" ] && ! echo "$decisions" | grep -q "No decisions"; then
     echo "--- Relevant Decisions ---"
     echo "$decisions"
@@ -283,7 +283,7 @@ CHANGED_FILES=$(git diff --cached --name-only)
 WARNINGS=""
 
 for file in $CHANGED_FILES; do
-  result=$(decision-tracker check "$file" --json 2>/dev/null || echo "[]")
+  result=$(cogito check "$file" --json 2>/dev/null || echo "[]")
   count=$(echo "$result" | node -e 'console.log(JSON.parse(fs.readFileSync(0)).length)' 2>/dev/null || echo "0")
   if [ "$count" -gt 0 ]; then
     WARNINGS="${WARNINGS}\n  - ${file}"
@@ -293,7 +293,7 @@ done
 if [ -n "$WARNINGS" ]; then
   echo "🧠 Decision Tracker: The following staged files match active architectural decisions:"
   echo -e "$WARNINGS"
-  echo "Review with: decision-tracker check <file>"
+  echo "Review with: cogito check <file>"
 fi
 ```
 
@@ -313,7 +313,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: npm install -g decision-tracker
+      - run: npm install -g cogito-cli
 
       - name: Check changed files against decisions
         run: |
@@ -321,7 +321,7 @@ jobs:
             const execSync = require("child_process").execSync;
             const files = execSync("git diff --name-only origin/${{ github.base_ref }}...HEAD", { encoding: "utf-8" }).split("\n").filter(Boolean);
             for (const file of files) {
-              const res = execSync(`decision-tracker check "${file}" --json`, { encoding: "utf-8" });
+              const res = execSync(`cogito check "${file}" --json`, { encoding: "utf-8" });
               console.log(file, res);
             }
           '
@@ -331,11 +331,11 @@ jobs:
 
 ## Integration with any AI agent
 
-`decision-tracker` is designed to work with any AI coding agent. The general pattern:
+`cogito` is designed to work with any AI coding agent. The general pattern:
 
-1. **Before Editing**: Call `decision-tracker check <file> --json` to retrieve matching decision records.
+1. **Before Editing**: Call `cogito check <file> --json` to retrieve matching decision records.
 2. **Prompt Injection**: Include the retrieved rationale and constraints in your agent's system prompt or context window.
-3. **After Decisions Are Made**: Call `decision-tracker record` (or invoke the MCP server tool) to log new decisions.
+3. **After Decisions Are Made**: Call `cogito record` (or invoke the MCP server tool) to log new decisions.
 
 ---
 
@@ -421,16 +421,16 @@ The extension must go through the main web app for any payment-related actions. 
 
 ## CLI reference
 
-### `decision-tracker init`
+### `cogito init`
 
 Initialize decision tracking in the current repository. Creates the `.decisions/` directory structure, copies the hook script to `.claude/hooks/`, and installs the `/decide` slash command to `.claude/commands/`.
 
-### `decision-tracker record`
+### `cogito record`
 
 Record a new decision from the command line interface.
 
 ```bash
-decision-tracker record \
+cogito record \
   --summary "Use PostgreSQL for persistence" \
   --rationale "ACID compliance, JSON support, mature ecosystem" \
   --scope "src/db/**/*.ts,src/models/**/*.ts" \
@@ -456,24 +456,24 @@ decision-tracker record \
 | `--supersedes` | No | — | ID of an old decision superseded by this one |
 | `--review-by` | No | — | Scheduled review date in ISO format (`YYYY-MM-DD`) |
 
-### `decision-tracker check <file>`
+### `cogito check <file>`
 
 Query active decisions governing a specific file path.
 
 ```bash
-decision-tracker check src/api/users.ts
-decision-tracker check src/api/users.ts --json   # JSON output format
+cogito check src/api/users.ts
+cogito check src/api/users.ts --json   # JSON output format
 ```
 
-### `decision-tracker list`
+### `cogito list`
 
 List recorded decisions with optional status and tag filters.
 
 ```bash
-decision-tracker list
-decision-tracker list --status active
-decision-tracker list --tags validation,schema
-decision-tracker list --json
+cogito list
+cogito list --status active
+cogito list --tags validation,schema
+cogito list --json
 ```
 
 ### `decision-tracker get <id>`
@@ -485,7 +485,7 @@ decision-tracker get dec_20260728_x8k2p9
 decision-tracker get dec_20260728_x8k2p9 --json
 ```
 
-### `decision-tracker import`
+### `cogito import`
 
 Import architectural decisions from existing ADR repositories (supports MADR and Nygard formats, e.g. `docs/adr/`).
 
@@ -499,41 +499,41 @@ Features:
 
 ```bash
 # Dry run preview of ADR import
-decision-tracker import --from adr docs/adr --dry-run
+cogito import --from adr docs/adr --dry-run
 
 # Import ADRs into .decisions/
-decision-tracker import --from adr docs/adr
+cogito import --from adr docs/adr
 
 # Import with explicit default scope fallback and JSON output
-decision-tracker import --from adr docs/adr --default-scope "src/**/*" --json
+cogito import --from adr docs/adr --default-scope "src/**/*" --json
 ```
 
 
-### `decision-tracker export`
+### `cogito export`
 
 Export architectural decisions to configuration and rule files for AI coding agents (Cursor, AGENTS.md, GitHub Copilot, Windsurf).
 
 ```bash
 # Export to all supported AI agent targets
-decision-tracker export
+cogito export
 
 # Export to a specific target
-decision-tracker export --target cursor
-decision-tracker export --target agents-md
-decision-tracker export --target copilot
-decision-tracker export --target windsurf
+cogito export --target cursor
+cogito export --target agents-md
+cogito export --target copilot
+cogito export --target windsurf
 
 # Check if agent files are in sync (exits 1 if out of sync, perfect for CI)
-decision-tracker export --check
+cogito export --check
 
 # Watch .decisions/ directory and continuously re-export on changes
-decision-tracker export --watch
+cogito export --watch
 
 # Install pre-commit hook (detects Husky, core.hooksPath, or .git/hooks)
-decision-tracker export --install-pre-commit
+cogito export --install-pre-commit
 
 # Output results as JSON
-decision-tracker export --json
+cogito export --json
 ```
 
 **Target specifications:**
@@ -554,16 +554,16 @@ decision-tracker export --json
 - **Pre-commit integration**: Installs a non-destructive hook check into Husky, Git hooks path, or standard `.git/hooks/pre-commit`.
 
 
-### `decision-tracker propose`
+### `cogito propose`
 
 Extract candidate architectural decisions from a session transcript file into the local inbox (`.decisions/.inbox/`).
 
 ```bash
 # Extract decision candidates from a Claude Code JSONL transcript
-decision-tracker propose --transcript ~/.claude/transcripts/session-123.jsonl
+cogito propose --transcript ~/.claude/transcripts/session-123.jsonl
 
 # Extract with a custom max candidate limit and JSON output
-decision-tracker propose --transcript session.jsonl --max 3 --json
+cogito propose --transcript session.jsonl --max 3 --json
 ```
 
 **Features:**
@@ -572,141 +572,141 @@ decision-tracker propose --transcript session.jsonl --max 3 --json
 - **Capped storage**: Limits extraction to the top 5 highest-confidence candidates per session.
 - **Gitignored inbox**: Stores proposals in `.decisions/.inbox/`, which is automatically added to `.gitignore` so unreviewed proposals remain local.
 
-### `decision-tracker review`
+### `cogito review`
 
 Interactive or automated review of candidate decisions saved in `.decisions/.inbox/`.
 
 ```bash
 # Interactive review (TTY): approve [a], edit [e], reject [r], skip [s], or quit [q]
-decision-tracker review
+cogito review
 
 # Non-interactive: auto-approve high-confidence candidates (score >= 0.75)
-decision-tracker review --yes
+cogito review --yes
 
 # Non-interactive with custom minimum score threshold
-decision-tracker review --yes --min-score 0.85
+cogito review --yes --min-score 0.85
 
 # List pending inbox proposals without prompting
-decision-tracker review --list
+cogito review --list
 
 # Output inbox proposals as JSON
-decision-tracker review --json
+cogito review --json
 ```
 
-### `decision-tracker hook <event>`
+### `cogito hook <event>`
 
 Cross-platform lifecycle hook handler designed for AI agents like Claude Code. Configured in `.claude/settings.json` or called directly.
 
 ```bash
 # PostToolUse: checks matching decisions when files are edited and returns advisory context
-decision-tracker hook post-tool-use < hook-input.json
+cogito hook post-tool-use < hook-input.json
 
 # SessionEnd: automatically captures candidate decisions to .decisions/.inbox/ silently
-decision-tracker hook session-end < hook-input.json
+cogito hook session-end < hook-input.json
 ```
 
 
-### `decision-tracker doctor`
+### `cogito doctor`
 
 Diagnose the health and freshness of repository architectural decisions. Checks for dead globs (matching 0 files), heavily changed files (code churn since decision creation via git log), expired `reviewBy` dates, and broken `supersededBy` links.
 
 ```bash
 # Run diagnostics (exits with code 0)
-decision-tracker doctor
+cogito doctor
 
 # Strict mode: exits with code 1 if any warnings or errors are found (for CI/CD)
-decision-tracker doctor --strict
+cogito doctor --strict
 
 # Output diagnostic report as JSON
-decision-tracker doctor --json
+cogito doctor --json
 ```
 
-### `decision-tracker lint`
+### `cogito lint`
 
 Validate all decision markdown files in `.decisions/` against schema definitions and directory alignment.
 
 ```bash
 # Lint decision files
-decision-tracker lint
+cogito lint
 
 # Output lint issues as JSON
-decision-tracker lint --json
+cogito lint --json
 ```
 
 A standard JSON Schema is published at [`schema/decision.schema.json`](schema/decision.schema.json) for IDE autocompletion and schema validation.
 
-### `decision-tracker reindex`
+### `cogito reindex`
 
 Rebuild `.decisions/index.json` from scratch by re-scanning all Markdown files in `.decisions/(active|superseded|archived)/`.
 
 ```bash
 # Rebuild decision cache index
-decision-tracker reindex
+cogito reindex
 
 # Reindex and output JSON summary
-decision-tracker reindex --json
+cogito reindex --json
 ```
 
-### `decision-tracker why <file>`
+### `cogito why <file>`
 
 Get a clear, human-readable explanation of why specific architectural decisions govern a target file, including historical rationale, context, and constraints.
 
 ```bash
 # Explain why decisions apply to a file
-decision-tracker why src/auth/session.ts
+cogito why src/auth/session.ts
 
 # Output explanation as JSON
-decision-tracker why src/auth/session.ts --json
+cogito why src/auth/session.ts --json
 ```
 
-### `decision-tracker log <id>`
+### `cogito log <id>`
 
 Visualize the supersession history and evolution of an architectural decision from its origin to its current state.
 
 ```bash
 # View supersession evolution timeline
-decision-tracker log dec_20260728_x8k2p9
+cogito log dec_20260728_x8k2p9
 
 # Output timeline chain as JSON
-decision-tracker log dec_20260728_x8k2p9 --json
+cogito log dec_20260728_x8k2p9 --json
 ```
 
-### `decision-tracker search <query>`
+### `cogito search <query>`
 
 Fast, relevance-ranked full-text search across decision summaries, rationales, contexts, consequences, tags, and authors.
 
 ```bash
 # Full-text search
-decision-tracker search "PostgreSQL persistence"
+cogito search "PostgreSQL persistence"
 
 # Filter search results by status
-decision-tracker search "caching" --status active
+cogito search "caching" --status active
 
 # Output search results as JSON
-decision-tracker search "JWT" --json
+cogito search "JWT" --json
 ```
 
-### `decision-tracker serve`
+### `cogito serve`
 
 Start the Model Context Protocol (MCP) server over stdio for use with Claude Code or other MCP-compatible clients.
 
 ```bash
-decision-tracker serve
+cogito serve
 ```
 
-### `decision-tracker dashboard`
+### `cogito dashboard`
 
 Start the local React web dashboard server.
 
 ```bash
-decision-tracker dashboard [--port 3333] [--no-open]
+cogito dashboard [--port 3333] [--no-open]
 ```
 
 ---
 
 ## MCP tools reference
 
-When running as an MCP server (`decision-tracker serve`), `decision-tracker` exposes four tools:
+When running as an MCP server (`cogito serve`), `cogito` exposes four tools:
 
 ### `query_decisions`
 
@@ -835,7 +835,7 @@ for (const match of matches) {
 
 ### Advisory, not blocking
 
-`decision-tracker` never blocks developers or prevents commits. It surfaces information — *"Here is what was decided before, and why"* — allowing humans and AI agents to make informed choices. If circumstances change, supersede or archive the decision.
+`cogito` never blocks developers or prevents commits. It surfaces information — *"Here is what was decided before, and why"* — allowing humans and AI agents to make informed choices. If circumstances change, supersede or archive the decision.
 
 ### Decisions are living documents
 
@@ -889,7 +889,7 @@ Claude: Advisory: 1 existing architectural decision applies to this file:
 ### Review decisions before starting work
 
 ```bash
-$ decision-tracker list --status active
+$ cogito list --status active
 
 📋 Found 3 Decision(s):
 
@@ -903,7 +903,7 @@ $ decision-tracker list --status active
 ### Check a file before modifying it
 
 ```bash
-$ decision-tracker check src/extension/api/client.ts
+$ cogito check src/extension/api/client.ts
 
 ⚠️  1 Architectural Decision(s) match 'src/extension/api/client.ts':
 
@@ -921,7 +921,7 @@ Author:    tarunagnihotri
 
 ## How it compares
 
-| Capability | Traditional ADRs (`docs/adr/`) | Wiki / Notion | Inline Code Comments | Static Rules (`.cursorrules`) | `decision-tracker` |
+| Capability | Traditional ADRs (`docs/adr/`) | Wiki / Notion | Inline Code Comments | Static Rules (`.cursorrules`) | `cogito` |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Surfaces on File Edits** | ❌ (Manual only) | ❌ (Detached) | ⚠️ (If you read surrounding code) | ⚠️ (Loaded globally on every turn) | ✅ **Automated via Hook & MCP** |
 | **Context Window Impact** | 0 tokens (never loaded) | 0 tokens | Clutters source code | High token cost (global context) | **Zero bloat (scoped only to target file)** |
@@ -937,25 +937,25 @@ Author:    tarunagnihotri
 
 ### 🔒 Privacy: Does any code or context leave my machine?
 **No. Nothing leaves your machine.**
-- `decision-tracker` runs 100% locally.
+- `cogito` runs 100% locally.
 - All decisions are saved in `.decisions/` within your git repository.
 - There are no telemetry pings, external analytics, or remote API calls.
 - Decision matching is performed using fast, local glob and AST inspection (<5ms).
 
 ### 🚦 Is this advisory or blocking?
 **Advisory by default.**
-`decision-tracker` acts as an institutional guide, not an impediment. When you or an AI agent edit a file that matches an active architectural decision, it surfaces a non-blocking advisory notification containing the ID, rationale, and scope. You can proceed with modifications, update the decision, or supersede it at any time.
+`cogito` acts as an institutional guide, not an impediment. When you or an AI agent edit a file that matches an active architectural decision, it surfaces a non-blocking advisory notification containing the ID, rationale, and scope. You can proceed with modifications, update the decision, or supersede it at any time.
 
 ### 🤖 Which AI agents and editors are supported?
-`decision-tracker` is tool-agnostic:
+`cogito` is tool-agnostic:
 - **Claude Code**: Native MCP server + `PostToolUse` hook + `/decide` slash command.
 - **Cursor**: Export directly to `.cursorrules` or `.cursor/rules/*.mdc`.
 - **GitHub Copilot**: Export managed architectural sections to `.github/copilot-instructions.md`.
 - **Windsurf**: Export to `.windsurfrules`.
-- **Roo Code / Cline / Any MCP Client**: Connects directly via standard stdio MCP protocol (`decision-tracker server`).
+- **Roo Code / Cline / Any MCP Client**: Connects directly via standard stdio MCP protocol (`cogito server`).
 
 ### 📦 How does it work with monorepos?
-`decision-tracker` natively detects monorepos (npm/pnpm/yarn workspaces, Lerna, Turborepo). Package-level decisions in subpackages automatically take precedence over root-level decisions when files within that subpackage are edited.
+`cogito` natively detects monorepos (npm/pnpm/yarn workspaces, Lerna, Turborepo). Package-level decisions in subpackages automatically take precedence over root-level decisions when files within that subpackage are edited.
 
 ---
 
@@ -978,7 +978,7 @@ Author:    tarunagnihotri
 
 **Tarun Agnihotri**
 - GitHub: [@tarunagnihotri534](https://github.com/tarunagnihotri534)
-- Repository: [decision-tracker](https://github.com/tarunagnihotri534/decision-tracker)
+- Repository: [decision-tracker](https://github.com/tarunagnihotri534/decision-memory)
 
 ---
 
